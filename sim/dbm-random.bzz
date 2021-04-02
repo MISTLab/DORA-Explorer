@@ -1,7 +1,7 @@
 include "buzz_includes/buzz_utils/vec2.bzz"
 include "buzz_includes/buzz_utils/string.bzz"
-include "config/elevation_map_sin/parameters.bzz"
-include "buzz_includes/elevation_map_sin/global_variables.bzz"
+include "config/DBM-SMS/parameters.bzz"
+include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
 var virtual_stigmergy
