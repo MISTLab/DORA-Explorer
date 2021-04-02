@@ -1,0 +1,63 @@
+include "buzz_includes/buzz_utils/vec2.bzz"
+include "buzz_includes/buzz_utils/string.bzz"
+include "config/elevation_map_sin/parameters.bzz"
+include "buzz_includes/elevation_map_sin/global_variables.bzz"
+include "buzz_includes/debug.bzz"
+
+var virtual_stigmergy
+
+# Executed at init time
+function init() {
+  # Take off command for the Spiri drone model
+  takeoff()
+
+  # Show trajectory for debugging
+  show_colored_trajectory(NUMBER_OF_ROBOTS)
+
+  # Set first search position
+  next_position.x = uniform(SEARCH_SPACE.minx, SEARCH_SPACE.maxx)
+  next_position.y = uniform(SEARCH_SPACE.miny, SEARCH_SPACE.maxy)
+
+  # Set swarm and virtual stigmergy
+  virtual_stigmergy = stigmergy.create(1)
+  
+  virtual_stigmergy.onconflict(function(k, l, r){
+      merged = l
+      merged_data = l.data * 0.5 + r.data * 0.5
+      #log("Conflict robot=",id, ", key=", k, " ",l.data, " ",r.data, " ", merged_data)
+      merged.data = merged_data
+      return merged
+    })
+}
+
+# Random walk search
+function random_search()
+{ 
+  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED, SEARCH_SPACE.maxx))
+  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED, SEARCH_SPACE.maxy))
+  goto(next_position.x, next_position.y)
+}
+
+# Executed every time step
+function step() {
+  
+  if (current_step < EXPERIMENT_LENGHT) {
+    if (current_step % NEW_POSE_DELAY) {
+      # Save elevation to the stigmergy
+      virtual_stigmergy.put(get_current_key(), get_current_elevation())
+
+      # Find next position
+      random_search()
+    }
+    current_step = current_step + 1
+  } 
+  else if (current_step == EXPERIMENT_LENGHT and id == 0) {
+    virtual_stigmergy.foreach(function(key, data, robot){
+      log_elevation(key, data)
+    })
+  }
+}
+ 
+# Execute at exit
+function destroy() {
+}
