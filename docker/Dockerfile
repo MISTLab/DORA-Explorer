@@ -68,7 +68,7 @@ RUN chmod +x /home/docker/argos3/build_simulator/argos_post_install.sh &&\
 RUN sudo apt-get install -y nano strace valgrind
 
 # Add dummy argument to force rebuild starting from that point
-ARG CODE_UPDATE=unknown
+ARG CODE_UPDATE_BUZZ=unknown
 
 # Install Buzz
 RUN git clone https://github.com/lajoiepy/Buzz.git /home/docker/buzz
@@ -81,6 +81,7 @@ RUN cd /home/docker/buzz &&\
     ldconfig
 
 # Clone simulation
+ADD https://api.github.com/repos/lajoiepy/DBM-SMS/git/refs/heads/master version.json
 RUN cd /home/docker/ &&\
     git clone https://github.com/lajoiepy/DBM-SMS.git
 
