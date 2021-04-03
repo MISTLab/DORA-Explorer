@@ -6,6 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
+#include <json/json.h>
 
 namespace buzz_drone_sim {
 
@@ -78,6 +79,23 @@ float CBuzzControllerDroneSim::GetCurrentElevation(){
    std::normal_distribution<float> noise_distribution(0.0, 0.1);
    float noise = noise_distribution(random_engine_);
    return std::sin(m_pcPos->GetReading().Position.GetX()) + noise;
+}
+
+/****************************************/
+/****************************************/
+
+std::vector<RadiationSource> CBuzzControllerDroneSim::GetRadiationSources(){
+   std::vector<RadiationSource> sources;
+   Json::Value radiationValues;
+   std::ifstream radiationFile("../data/radiation_sources.json");
+
+   radiationFile >> radiationValues;
+
+   for (auto source : radiationValues["sources"]){
+      sources.push_back(RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat()));
+   }
+
+   return sources;
 }
 
 /****************************************/

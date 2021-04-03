@@ -23,7 +23,7 @@ def generate_source() -> dict:
 
 
 def main():
-    with open("radiation_sources.json", "w") as f:
+    with open("../sim/controller/data/radiation_sources.json", "w") as f:
         json.dump([generate_source() for _ in range(NB_RADIATION_SOURCES)], f, indent=2)
 
 

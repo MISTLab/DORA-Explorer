@@ -7,6 +7,9 @@
 
 #include <random>
 #include <chrono>
+#include <vector>
+
+#include "radiation_source.h"
 
 using namespace argos;
 
@@ -38,6 +41,8 @@ public:
    std::string GetCurrentKey();
 
    float GetCurrentElevation();
+
+   std::vector<RadiationSource> GetRadiationSources();
 
    void LogElevationDatum(const std::string& key, const float& data);
 
