@@ -230,6 +230,22 @@ static int BuzzGetCurrentElevation(buzzvm_t vm){
 /****************************************/
 /****************************************/
 
+static int BuzzGetRadiationIntensity(buzzvm_t vm){
+   /* Get pointer to the controller */
+   buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
+   buzzvm_gload(vm);
+   /* Call function */
+   float radiationIntensity = 
+      reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->GetRadiationIntensity();
+   
+   buzzvm_pushf(vm, radiationIntensity);
+
+   return buzzvm_ret1(vm);
+}
+
+/****************************************/
+/****************************************/
+
 static int BuzzLogElevationDatum(buzzvm_t vm){
    /* Push the vector components */
    buzzvm_lload(vm, 1);
@@ -298,6 +314,10 @@ buzzvm_state CBuzzControllerDroneSim::RegisterFunctions() {
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "get_current_elevation", 1));
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzGetCurrentElevation));
+   buzzvm_gstore(m_tBuzzVM);
+
+   buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "get_radiation_intensity", 1));
+   buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzGetRadiationIntensity));
    buzzvm_gstore(m_tBuzzVM);
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "log_elevation", 1));

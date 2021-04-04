@@ -9,6 +9,7 @@ class RadiationSource
         
     public:
         RadiationSource(const float x, const float y, const float intensity);
+        float GetIntensity();
 };
 
 }

@@ -42,7 +42,7 @@ public:
 
    float GetCurrentElevation();
 
-   std::vector<RadiationSource> GetRadiationSources();
+   float GetRadiationIntensity();
 
    void LogElevationDatum(const std::string& key, const float& data);
 

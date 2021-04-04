@@ -12,5 +12,8 @@ RadiationSource::RadiationSource(const float x, const float y, const float inten
 /****************************************/
 /****************************************/
 
+float RadiationSource::GetIntensity() {
+    return this->intensity;
+}
 
 }

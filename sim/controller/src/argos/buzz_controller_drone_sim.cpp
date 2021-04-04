@@ -84,7 +84,7 @@ float CBuzzControllerDroneSim::GetCurrentElevation(){
 /****************************************/
 /****************************************/
 
-std::vector<RadiationSource> CBuzzControllerDroneSim::GetRadiationSources(){
+float CBuzzControllerDroneSim::GetRadiationIntensity(){
    std::vector<RadiationSource> sources;
    Json::Value radiationValues;
    std::ifstream radiationFile("../data/radiation_sources.json");
@@ -95,7 +95,7 @@ std::vector<RadiationSource> CBuzzControllerDroneSim::GetRadiationSources(){
       sources.push_back(RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat()));
    }
 
-   return sources;
+   return sources[0].GetIntensity();
 }
 
 /****************************************/
