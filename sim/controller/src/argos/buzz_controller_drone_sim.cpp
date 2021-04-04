@@ -98,8 +98,11 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
       RadiationSource radiation = RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat());
       totalRadiationIntensity += radiation.GetPerceivedIntensity(x, y);
    }
+   
+   std::normal_distribution<float> noise_distribution(-0.1, 0.1);
+   float noise = noise_distribution(random_engine_);
 
-   return totalRadiationIntensity;
+   return totalRadiationIntensity + noise;
 }
 
 /****************************************/
