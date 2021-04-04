@@ -85,17 +85,21 @@ float CBuzzControllerDroneSim::GetCurrentElevation(){
 /****************************************/
 
 float CBuzzControllerDroneSim::GetRadiationIntensity(){
-   std::vector<RadiationSource> sources;
    Json::Value radiationValues;
    std::ifstream radiationFile("../data/radiation_sources.json");
 
    radiationFile >> radiationValues;
 
+   int x = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetX()));
+   int y = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetY()));
+   
+   float totalRadiationIntensity = 0.0;
    for (auto source : radiationValues["sources"]){
-      sources.push_back(RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat()));
+      RadiationSource radiation = RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat());
+      totalRadiationIntensity += radiation.GetPerceivedIntensity(x, y);
    }
 
-   return sources[0].GetIntensity();
+   return totalRadiationIntensity;
 }
 
 /****************************************/

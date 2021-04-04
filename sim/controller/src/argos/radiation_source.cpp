@@ -16,4 +16,10 @@ float RadiationSource::GetIntensity() {
     return this->intensity;
 }
 
+float RadiationSource::GetPerceivedIntensity(const int x, const int y) {
+    float distance = sqrt(pow(this->x - x, 2.0) + pow(this->y - y, 2.0));
+
+    return this->intensity / (pow(distance, 2.0));
+}
+
 }
