@@ -81,6 +81,8 @@ RUN cd /home/docker/buzz &&\
     ldconfig
 
 # Simulation dependencies
+RUN apt-get update && apt-get install -y python-pip
+RUN pip install matplotlib && pip install scipy
 RUN apt-get update && apt-get install -y libjsoncpp-dev
 
 # Clone simulation
