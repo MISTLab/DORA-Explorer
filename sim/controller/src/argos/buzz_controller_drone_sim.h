@@ -44,7 +44,7 @@ public:
 
    float GetRadiationIntensity();
 
-   void LogElevationDatum(const std::string& key, const float& data);
+   void LogDatum(const std::string& key, const float& data);
 
 protected:
 

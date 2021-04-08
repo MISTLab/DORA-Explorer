@@ -43,8 +43,9 @@ function step() {
   
   if (current_step < EXPERIMENT_LENGHT) {
     if (current_step % NEW_POSE_DELAY) {
-      # Save elevation to the stigmergy
-      virtual_stigmergy.put(get_current_key(), get_current_elevation())
+      # Save radiation intensity to the stigmergy
+      log("radiation level = ", get_radiation_intensity())
+      virtual_stigmergy.put(get_current_key(), get_radiation_intensity())
 
       # Find next position
       random_search()
@@ -53,7 +54,7 @@ function step() {
   } 
   else if (current_step == EXPERIMENT_LENGHT and id == 0) {
     virtual_stigmergy.foreach(function(key, data, robot){
-      log_elevation(key, data)
+      log_datum(key, data)
     })
   }
 }

@@ -6,7 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 namespace buzz_drone_sim {
 
@@ -86,9 +86,10 @@ float CBuzzControllerDroneSim::GetCurrentElevation(){
 
 float CBuzzControllerDroneSim::GetRadiationIntensity(){
    Json::Value radiationValues;
-   std::ifstream radiationFile("../data/radiation_sources.json");
+   Json::Reader reader;
+   std::ifstream radiationFile("../../data/radiation_sources.json");
 
-   radiationFile >> radiationValues;
+   reader.parse(radiationFile, radiationValues);
 
    int x = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetX()));
    int y = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetY()));
@@ -99,7 +100,7 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
       totalRadiationIntensity += radiation.GetPerceivedIntensity(x, y);
    }
    
-   std::normal_distribution<float> noise_distribution(-0.1, 0.1);
+   std::normal_distribution<float> noise_distribution(0.0, 0.1);
    float noise = noise_distribution(random_engine_);
 
    return totalRadiationIntensity + noise;
@@ -108,7 +109,7 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
 /****************************************/
 /****************************************/
 
-void CBuzzControllerDroneSim::LogElevationDatum(const std::string& key, const float& data){
+void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data){
    std::string parsed_key = key;
    std::replace(parsed_key.begin(), parsed_key.end(), '_', ' ');
    std::stringstream ss(parsed_key);
@@ -116,7 +117,7 @@ void CBuzzControllerDroneSim::LogElevationDatum(const std::string& key, const fl
    ss >> x >> y;
 
    std::ofstream elevation_file;
-   elevation_file.open("/home/docker/elevation.txt", std::ios::out | std::ios::app);
+   elevation_file.open("/home/docker/result.txt", std::ios::out | std::ios::app);
 
    float weight = 1.0;
    elevation_file << x << " " << y << " " << data << " " << weight << std::endl;
