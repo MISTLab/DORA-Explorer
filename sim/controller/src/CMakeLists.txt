@@ -34,7 +34,9 @@ set(ARGOS_BUZZ_SOURCES
   utils/buzz_utils.h  
   argos/buzz_controller_drone_sim.h       
   argos/buzz_controller_drone_sim.cpp     
-  argos/buzz_closures_drone_sim.cpp   )
+  argos/buzz_closures_drone_sim.cpp
+  argos/radiation_source.h       
+  argos/radiation_source.cpp   )
 
 add_library(argos3plugin_buzz_simulator_drone SHARED ${ARGOS_BUZZ_SOURCES})
 target_link_libraries(argos3plugin_buzz_simulator_drone
