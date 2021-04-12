@@ -8,12 +8,8 @@ include "buzz_includes/debug.bzz"
 ARENA_SIZE_X = 50
 ARENA_SIZE_Y = 50
 
-AXIS_X = 0
-AXIS_Y = 1
-
-step_counter = 0
-stigmergy_risk
-stigmergy_exploration
+var stigmergy_risk
+var stigmergy_exploration
 
 
 function init_stigmergies() {
@@ -41,7 +37,7 @@ function init_stigmergies() {
       while (j < ARENA_SIZE_Y) {
         key = string.concat(string.tostring(i), "_", string.tostring(j))
 
-        stigmergy_risk.put(key, nil)
+        stigmergy_risk.put(key, -1)
         stigmergy_exploration.put(key, 0)
 
         j = j + 1
@@ -56,7 +52,11 @@ function update_risk() {
 }
 
 function update_exploration() {
-  stigmergy_exploration.put(get_current_key(), step_counter)  # Put timestamp in exploration map
+  stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
+}
+
+function barrier_stigmergy_init() {
+  return stigmergy_risk.size() >= ARENA_SIZE_X * ARENA_SIZE_Y and stigmergy_exploration.size() >= ARENA_SIZE_X * ARENA_SIZE_Y
 }
 
 # Executed at init time
@@ -84,7 +84,7 @@ function random_search()
 
 # Executed every time step
 function step() {
-  if (current_step < EXPERIMENT_LENGHT) {
+  if (barrier_stigmergy_init() and current_step < EXPERIMENT_LENGHT) {
     if (current_step % NEW_POSE_DELAY) {
       update_exploration()
       update_risk()
@@ -99,8 +99,6 @@ function step() {
       log_datum(key, data)
     })
   }
-
-  step_counter = step_counter + 1
 }
  
 # Execute at exit
