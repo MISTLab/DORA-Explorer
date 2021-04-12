@@ -28,8 +28,7 @@
         <colored_blob_perspective_camera implementation="default" medium="leds" show_rays="true" />
         <positioning                     implementation="default"/>
       </sensors>
-      <params bytecode_file="/home/docker/DBM-SMS/sim/dbm-random.bo"
-              debug_file="/home/docker/DBM-SMS/sim/dbm-random.bdb" />
+      <params bytecode_file="dbm-random.bo" debug_file="dbm-random.bdb" />
     </buzz_controller_drone_sim>
 
 
@@ -82,7 +81,7 @@
           <placement index="0" position="0,0,100" look_at="0,0,0" up="-1,0,0" lens_focal_length="124" />
         </placements>
       </camera>
-       <frame_grabbing directory="/home/docker/DBM-SMS/sim/log/"
+       <frame_grabbing directory="log/"
                        base_name="frame_" 
                        format="png"
                        quality="100" /> 

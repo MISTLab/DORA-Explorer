@@ -6,7 +6,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cmath>
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 
 namespace buzz_drone_sim {
 

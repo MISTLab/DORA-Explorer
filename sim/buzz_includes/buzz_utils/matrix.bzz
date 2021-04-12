@@ -1,0 +1,194 @@
+#
+# Create a new namespace for matrix functions
+#
+math.matrix = {}
+
+
+#
+# Creates a new matrix.
+# PARAM m: The size of the first dimension.
+# PARAM n: The size of the second dimension.
+# RETURN: A new m by n matrix filled with zeros.
+#
+math.matrix.new = function(m, n) {
+  var A = {}
+  var i = 0
+  var j = 0
+
+  while (i < m) {
+    A[i] = {}
+    j = 0
+    while (j < n) {
+      A[i][j] = 0
+      j = j + 1
+    }
+    i = i + 1
+  }
+  
+  return A
+}
+
+#
+# Creates a new matrix from a vec2 (i.e. transforms a vec2 to a matrix).
+# PARAM v: The vec2.
+# RETURN: The matricial form of v.
+#
+math.matrix.newv = function(v) {
+    return { .0 = { .0 = v.x, .1 = v.x } }
+}
+
+#
+# Creates a new identity matrix.
+# PARAM m: The size of the dimensions.
+# RETURN: A new m by m identity matrix.
+#
+math.matrix.identity = function(m) {
+  var A = math.matrix.new(m)
+  var i = 0
+
+  while (i < m) {
+    A[i][i] = 1
+    i = i + 1
+  }
+  
+  return A
+}
+
+#
+# Transposes a matrix.
+# PARAM A: The matrix.
+# RETURN: The transposed matrix.
+#
+math.matrix.transpose = function(A) {
+  var m = size(A)
+  var n = size(A[0])
+  var B = math.matrix.new(m, n)
+  var i = 0
+  var j = 0
+
+  while (i < m) {
+    j = 0
+    while (j < n) {
+      B[j][i] = A[i][j]
+      j = j + 1
+    }
+    i = i + 1
+  }
+  
+  return B
+}
+
+#
+# Scales a matrix.
+# PARAM s: The scalar.
+# PARAM A: The matrix.
+# RETURN: The result of sA in a new matrix.
+#
+math.matrix.transpose = function(s, A) {
+  var m = size(A)
+  var n = size(A[0])
+  var B = math.matrix.new(m, n)
+  var i = 0
+  var j = 0
+
+  while (i < m) {
+    j = 0
+    while (j < n) {
+      B[i][j] = s * A[i][j]
+      j = j + 1
+    }
+    i = i + 1
+  }
+  
+  return B
+}
+
+#
+# Adds 2 matrices.
+# PARAM A: The first matrix.
+# PARAM B: The second matrix.
+# RETURN: The result of A + B in a new matrix.
+#
+math.matrix.add = function(A, B) {
+  var m = size(A)
+  var n = size(A[0])
+  var C = math.matrix.new(m, n)
+  var i = 0
+  var j = 0
+
+  while (i < m) {
+    j = 0
+    while (j < n) {
+      C[i][j] = A[i][j] + B[i][j]
+      j = j + 1
+    }
+    i = i + 1
+  }
+  
+  return C
+}
+
+#
+# Subtracts 2 matrices.
+# PARAM A: The first matrix.
+# PARAM B: The second matrix.
+# RETURN: The result of A - B in a new matrix.
+#
+math.matrix.sub = function(A, B) {
+  var m = size(A)
+  var n = size(A[0])
+  var C = math.matrix.new(m, n)
+  var i = 0
+  var j = 0
+
+  while (i < m) {
+    j = 0
+    while (j < n) {
+      C[i][j] = A[i][j] - B[i][j]
+      j = j + 1
+    }
+    i = i + 1
+  }
+  
+  return C
+}
+
+#
+# Multiplies 2 matrices.
+# PARAM A: The first matrix.
+# PARAM B: The second matrix.
+# RETURN: The result of AB in a new matrix.
+#
+math.matrix.multiply = function(A, B) {
+  var C = math.matrix.new(size(A), size(B[0]))
+  var i = 0
+  var j = 0
+  var k = 0
+
+  while (i < size(A)) {
+    j = 0
+    while (j < size(B[0])) {
+      k = 0
+      while (k < size(B)) {
+        C[i][j] = C[i][j] + A[i][k] * B[k][j]
+        k = k + 1
+      }
+      j = j + 1
+    }
+    i = i + 1
+  }
+
+  return C
+}
+
+#
+# Prints a matrix in a Python-like format.
+# PARAM A: The matrix.
+# RETURN: nil.
+#
+math.matrix.print = function(A) {
+  foreach(A, function(i, row) {
+      t2[key] = value
+    })
+
+}
