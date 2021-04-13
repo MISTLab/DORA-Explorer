@@ -8,6 +8,9 @@ include "buzz_includes/debug.bzz"
 ARENA_SIZE_X = 50
 ARENA_SIZE_Y = 50
 
+EXPLORATION_WEIGHT = 1.0
+RISK_WEIGHT = 1.0
+
 var stigmergy_risk
 var stigmergy_exploration
 
@@ -94,12 +97,14 @@ function init() {
   init_stigmergies()
 }
 
-# Random walk search
-function random_search()
-{ 
-  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED, SEARCH_SPACE.maxx))
-  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED, SEARCH_SPACE.maxy))
-  goto(next_position.x, next_position.y)
+function move() {
+  exploration = math.vec2.scale(goto_gradient(exploration_gradient), EXPLORATION_WEIGHT)
+  risk = math.vec2.scale(goto_gradient(risk_gradient), RISK_WEIGHT)
+
+  norm_direction = math.vec2.norm(math.vec2.add(exploration, risk))
+  scaled_direction = math.vec2.scale(norm_direction, SEARCH_SPEED)
+
+  goto(scaled_direction.x, scaled_direction.y)
 }
 
 # Executed every time step
@@ -109,8 +114,7 @@ function step() {
       update_exploration()
       update_risk()
 
-      # Find next position
-      random_search()
+      move()
     }
     current_step = current_step + 1
   } 
