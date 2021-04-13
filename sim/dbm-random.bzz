@@ -57,6 +57,14 @@ function risk_gradient(adjacent_key) {
   }
 }
 
+function get_adjacent_key(i, j) {
+  split_key = string.split(get_current_key(), "_")
+  key_x = string.toint(split_key[0]) + i
+  key_y = string.toint(split_key[1]) + j
+
+  return string.concat(string.tostring(key_x), "_", string.tostring(key_y))
+}
+
 function goto_gradient(gradient_function){
   var i = -1
   var j = -1
@@ -66,13 +74,8 @@ function goto_gradient(gradient_function){
     j = -1
     while (j <= 1){
       if (i != 0 and j != 0){
-        key_x = string.toint(string.charat(get_current_key(), 0)) + i
-        key_y = string.toint(string.charat(get_current_key(), 2)) + j
-        adjacent_key = string.concat(key_x, "_", key_y)
-
-        gradient_intensity = gradient_function(adjacent_key)
-        
-        vec_goto = math.vec2.add(vec_goto, math.vec2.scale(math.vec2.norm(math.vec2.new(i, j), gradient_intensity)))
+        gradient_intensity = gradient_function(get_adjacent_key(i, j))
+        vec_goto = math.vec2.add(vec_goto, math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity))
       }
       j = j + 1
     }
