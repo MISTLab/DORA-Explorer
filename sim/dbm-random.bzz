@@ -51,7 +51,7 @@ function exploration_gradient(adjacent_key) {
 
 function risk_gradient(adjacent_key) {
   if (stigmergy_risk.get(adjacent_key) != nil) {
-    return stigmergy_risk.get(current_key) - stigmergy_risk.get(adjacent_key)
+    return get_radiation_intensity() - stigmergy_risk.get(adjacent_key)
   } else {
     return 0.0
   }
@@ -63,6 +63,16 @@ function get_adjacent_key(i, j) {
   key_y = string.toint(split_key[1]) + j
 
   return string.concat(string.tostring(key_x), "_", string.tostring(key_y))
+}
+
+# Safely normalize a vector. 
+# If input vector is (0, 0), return a random vector to avoid division by zero.
+function safe_normalize(vector) {
+  if (vector.x == 0 and vector.y == 0) {
+    return math.vec2.new(math.rng.uniform(-0.5, 0.5), math.rng.uniform(-0.5, 0.5))
+  } else {
+    return math.vec2.norm(vector)
+  }
 }
 
 function gradient(gradient_function){
@@ -84,7 +94,7 @@ function gradient(gradient_function){
     i = i + 1
   }
 
-  return math.vec2.norm(gradient_vec)
+  return safe_normalize(gradient_vec)
 }
 
 # Executed at init time
@@ -106,7 +116,7 @@ function move() {
   exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_WEIGHT)
   risk = math.vec2.scale(gradient(risk_gradient), RISK_WEIGHT)
 
-  norm_direction = math.vec2.norm(math.vec2.add(exploration, risk))
+  norm_direction = safe_normalize(math.vec2.add(exploration, risk))
   scaled_direction = math.vec2.scale(norm_direction, SEARCH_SPEED)
 
   goto(scaled_direction.x, scaled_direction.y)
