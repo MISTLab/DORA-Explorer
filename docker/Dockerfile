@@ -83,7 +83,8 @@ RUN cd /home/docker/buzz &&\
 # Simulation dependencies
 RUN apt-get update && apt-get install -y python-pip
 RUN pip install matplotlib && pip install scipy
-RUN apt-get update && apt-get install -y libjsoncpp-dev
+RUN apt-get update && apt-get install -y libjsoncpp-dev &&\
+    ln -s /usr/include/jsoncpp/json/ /usr/include/json
 
 # Clone simulation
 ADD https://api.github.com/repos/lajoiepy/DBM-SMS/git/refs/heads/master version.json
