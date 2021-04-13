@@ -44,7 +44,7 @@ public:
 
    float GetRadiationIntensity();
 
-   void LogDatum(const std::string& key, const float& data);
+   void LogDatum(const std::string& key, const float& data, const int& step);
 
 protected:
 
@@ -53,6 +53,7 @@ protected:
 private:
 
    std::default_random_engine random_engine_;
+
 };
 }
 #endif

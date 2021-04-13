@@ -121,7 +121,7 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
 /****************************************/
 /****************************************/
 
-void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data){
+void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data, const int& step){
    std::string parsed_key = key;
    std::replace(parsed_key.begin(), parsed_key.end(), '_', ' ');
    std::stringstream ss(parsed_key);
@@ -132,7 +132,7 @@ void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data
    result_file.open(RESULT_FILE, std::ios::out | std::ios::app);
 
    float weight = 1.0;
-   result_file << x << " " << y << " " << data << " " << weight << std::endl;
+   result_file << x << " " << y << " " << data << " " << weight << " " << step << std::endl;
 }
 
 }
