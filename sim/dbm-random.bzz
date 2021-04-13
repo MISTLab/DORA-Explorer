@@ -38,33 +38,45 @@ function update_exploration() {
   stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
 }
 
-function goto_exploration(){
+function exploration_gradient(adjacent_key) {
+  if (stigmergy_exploration.get(adjacent_key) != nil) {
+    return current_step - stigmergy_exploration.get(adjacent_key)
+  } else {
+    return current_step
+  }
+}
+
+function risk_gradient(adjacent_key) {
+  if (stigmergy_risk.get(adjacent_key) != nil) {
+    return stigmergy_risk.get(current_key) - stigmergy_risk.get(adjacent_key)
+  } else {
+    return 0.0
+  }
+}
+
+function goto_gradient(gradient_function){
   var i = -1
   var j = -1
-  var vec_exploration = math.vec2.new(0.0,0.0)
+  var vec_goto = math.vec2.new(0.0, 0.0)
 
   while (i <= 1){
     j = -1
     while (j <= 1){
       if (i != 0 and j != 0){
-        key_x = string.toint(string.charat(get_current_key(),0)) + i
-        key_y = string.toint(string.charat(get_current_key(),2)) + j
-        key = string.concat(key_x, "_", key_y)
+        key_x = string.toint(string.charat(get_current_key(), 0)) + i
+        key_y = string.toint(string.charat(get_current_key(), 2)) + j
+        adjacent_key = string.concat(key_x, "_", key_y)
 
-        if (stigmergy_exploration.get(key) != nil) {
-          gradient_intensity = (current_step - stigmergy_exploration.get(key))
-        } else {
-          gradient_intensity = current_step
-        }
+        gradient_intensity = gradient_function(adjacent_key)
         
-        vec_exploration = math.vec2.add(vec_exploration, math.vec2.scale(math.vec2.norm(math.vec2.new(i,j), gradient_intensity)))
+        vec_goto = math.vec2.add(vec_goto, math.vec2.scale(math.vec2.norm(math.vec2.new(i, j), gradient_intensity)))
       }
       j = j + 1
     }
     i = i + 1
   }
 
-  return math.vec2.norm(vec_exploration)
+  return math.vec2.norm(vec_goto)
 }
 
 # Executed at init time
