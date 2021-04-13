@@ -59,46 +59,28 @@ function barrier_stigmergy_init() {
   return stigmergy_risk.size() >= ARENA_SIZE_X * ARENA_SIZE_Y and stigmergy_exploration.size() >= ARENA_SIZE_X * ARENA_SIZE_Y
 }
 
-function get_unit_vec(AXIS,i,j){
-  key = string.concat(string.tostring(i), string.tostring(j))
-  
-  unit_vec_direction_x = { ."-1-1" = -0.707, ."-10" = -1.0, ."-11" = -0.707,
-                    ."0-1" = 0.0, ."00" = 0.0, ."01" = 0.0, 
-                    ."1-1" = 0.707, ."10" = 1.0, ."11" = 0.707}
-
-  unit_vec_direction_y = { ."-1-1" = -0.707, ."-10" = 0.0, ."-11" = 0.707,
-                    ."0-1" = -1.0, ."00" = 0.0, ."01" = 1.0, 
-                    ."1-1" = -0.707, ."10" = 0.0, ."11" = 0.707}
-  
-if (AXIS == "X"){
-  return unit_vec_direction_x["key"]
-}
-
-if (AXIS == "Y"){
-  return unit_vec_direction_y["key"]
-}
-
-}
-
 function goto_exploration(){
-  i = -1
-  j = -1
-  vec_exploration.x = 0
-  vec_exploration.y = 0
+  var i = -1
+  var j = -1
+  var vec_exploration = math.vec2.new(0.0,0.0)
+
   while (i <= 1){
     j = -1
     while (j <= 1){
-      gradient_intensity = (current_step - stigmergy_exploration.get(get_current_key()))
-      vec_exploration.x = vec_exploration.x + gradient_intensity * get_unit_vec("X",i,j)
-      vec_exploration.y = vec_exploration.y + gradient_intensity * get_unit_vec("Y",i,j)
+      if (i != 0 and j != 0){
+        key_x = string.toint(string.charat(get_current_key(),0)) + i
+        key_y = string.toint(string.charat(get_current_key(),2)) + j
+        key = string.concat(key_x, "_", key_y)
+
+        gradient_intensity = (current_step - stigmergy_exploration.get(key))
+        vec_exploration = math.vec2.add(vec_exploration, math.vec2.scale(math.vec2.norm(math.vec2.new(i,j), gradient_intensity)))
+      }
       j = j + 1
     }
     i = i + 1
   }
-  vec_exploration.x = vec_exploration.x / math.sqrt(vec_exploration.x^(2) + vec_exploration.y^(2))
-  vec_exploration.y = vec_exploration.y / math.sqrt(vec_exploration.x^(2) + vec_exploration.y^(2))
 
-  return vec_exploration
+  return math.vec2.norm(vec_exploration)
 }
 
 # Executed at init time
