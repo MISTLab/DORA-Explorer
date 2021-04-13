@@ -73,7 +73,7 @@ function gradient(gradient_function){
   while (i <= 1){
     j = -1
     while (j <= 1){
-      if (i != 0 and j != 0){
+      if (not(i == 0 and j == 0)){
         gradient_intensity = gradient_function(get_adjacent_key(i, j))
         adjacent_gradient = math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity)
 
