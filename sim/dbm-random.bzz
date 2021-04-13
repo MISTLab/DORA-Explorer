@@ -65,24 +65,26 @@ function get_adjacent_key(i, j) {
   return string.concat(string.tostring(key_x), "_", string.tostring(key_y))
 }
 
-function goto_gradient(gradient_function){
+function gradient(gradient_function){
   var i = -1
   var j = -1
-  var vec_goto = math.vec2.new(0.0, 0.0)
+  var gradient_vec = math.vec2.new(0.0, 0.0)
 
   while (i <= 1){
     j = -1
     while (j <= 1){
       if (i != 0 and j != 0){
         gradient_intensity = gradient_function(get_adjacent_key(i, j))
-        vec_goto = math.vec2.add(vec_goto, math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity))
+        adjacent_gradient = math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity)
+
+        gradient_vec = math.vec2.add(gradient_vec, adjacent_gradient)
       }
       j = j + 1
     }
     i = i + 1
   }
 
-  return math.vec2.norm(vec_goto)
+  return math.vec2.norm(gradient_vec)
 }
 
 # Executed at init time
@@ -101,8 +103,8 @@ function init() {
 }
 
 function move() {
-  exploration = math.vec2.scale(goto_gradient(exploration_gradient), EXPLORATION_WEIGHT)
-  risk = math.vec2.scale(goto_gradient(risk_gradient), RISK_WEIGHT)
+  exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_WEIGHT)
+  risk = math.vec2.scale(gradient(risk_gradient), RISK_WEIGHT)
 
   norm_direction = math.vec2.norm(math.vec2.add(exploration, risk))
   scaled_direction = math.vec2.scale(norm_direction, SEARCH_SPEED)
