@@ -73,7 +73,7 @@ function step() {
   } 
   else if (current_step == EXPERIMENT_LENGHT and id == 0) {
     stigmergy_risk.foreach(function(key, data, robot){
-      log_datum(key, data, current_step)
+      log_datum(key, data, debug.msgqueue.total, current_step)
     })
   }
   current_step = current_step + 1

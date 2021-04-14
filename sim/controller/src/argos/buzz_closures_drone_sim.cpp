@@ -251,12 +251,15 @@ static int BuzzLogDatum(buzzvm_t vm){
    buzzvm_lload(vm, 1);
    buzzvm_lload(vm, 2);
    buzzvm_lload(vm, 3);
+   buzzvm_lload(vm, 4);
    /* Create a new vector with that */
    std::string key;
    float data;
    int step;
-   buzzobj_t tkey = buzzvm_stack_at(vm, 3);
-   buzzobj_t tdata = buzzvm_stack_at(vm, 2);
+   int total_data;
+   buzzobj_t tkey = buzzvm_stack_at(vm, 4);
+   buzzobj_t tdata = buzzvm_stack_at(vm, 3);
+   buzzobj_t ttotal = buzzvm_stack_at(vm, 2);
    buzzobj_t tstep = buzzvm_stack_at(vm, 1);
    if(tkey->o.type == BUZZTYPE_STRING) key = tkey->s.value.str;
    else {
@@ -288,12 +291,22 @@ static int BuzzLogDatum(buzzvm_t vm){
          );
       return vm->state;
    }
+   if(ttotal->o.type == BUZZTYPE_INT) total_data = ttotal->i.value;
+   else {
+      buzzvm_seterror(vm,
+                      BUZZVM_ERROR_TYPE,
+                      "log_datum(key,data,step): expected %s, got %s in second argument",
+                      buzztype_desc[BUZZTYPE_INT],
+                      buzztype_desc[ttotal->o.type]
+         );
+      return vm->state;
+   }
 
    /* Get pointer to the controller */
    buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
    buzzvm_gload(vm);
    /* Call function */
-   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->LogDatum(key, data, step);
+   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->LogDatum(key, data, total_data, step);
 
    return buzzvm_ret0(vm);
 }

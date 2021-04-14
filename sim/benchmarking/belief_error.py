@@ -17,6 +17,7 @@ result_X = np.array([])
 result_Y = np.array([])
 result_belief = np.array([])
 result_W = np.array([])
+result_total_data_transmitted = np.array([])
 result_step = np.array([])
 f = open(result_file, "r")
 lines = f.readlines()
@@ -26,7 +27,8 @@ for line in lines:
     result_Y = np.append(result_Y,int(elems[1]))
     result_belief = np.append(result_belief,float(elems[2]))
     result_W = np.append(result_W,float(elems[3]))
-    result_step = np.append(result_step,float(elems[4]))
+    result_total_data_transmitted = np.append(result_W,float(elems[4]))
+    result_step = np.append(result_step,float(elems[5]))
 
 # Read the radiation sources
 radiation_X = np.array([])
@@ -75,3 +77,5 @@ for i in range(0, len(result_X)):
 average_belief_error = belief_error / len(result_X)
 print("Average error = " + str(average_belief_error))
 print("Amount of radiation absorbed = " + str(amount_of_radiation))
+amount_transmitted = result_total_data_transmitted[len(result_total_data_transmitted) - 1]
+print("Amount transmitted = ", amount_transmitted)
