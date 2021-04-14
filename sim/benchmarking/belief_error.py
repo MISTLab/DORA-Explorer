@@ -3,54 +3,74 @@
 # the DBM
 ###
 
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import numpy as np
 import json
+import math
 
 ### Parameters
 result_file = "../results/result.txt"
 radiation_sources_file = "../data/radiation_sources.json"
 ###
 
-# Initialize figure
-fig = plt.figure()
-ax = fig.gca(projection='3d')
-
 # Read radiation results.
 result_X = np.array([])
 result_Y = np.array([])
-result_Z = np.array([])
+result_belief = np.array([])
 result_W = np.array([])
+result_step = np.array([])
 f = open(result_file, "r")
 lines = f.readlines()
 for line in lines:
     elems = line.split()
     result_X = np.append(result_X,int(elems[0]))
     result_Y = np.append(result_Y,int(elems[1]))
-    result_Z = np.append(result_Z,float(elems[2]))
+    result_belief = np.append(result_belief,float(elems[2]))
     result_W = np.append(result_W,float(elems[3]))
-
-# Plot the results.
-results_points = ax.scatter(result_X,result_Y,result_Z, color="blue")
+    result_step = np.append(result_step,float(elems[4]))
 
 # Read the radiation sources
 radiation_X = np.array([])
 radiation_Y = np.array([])
-radiation_Z = np.array([])
+radiation_intensity = np.array([])
 with open(radiation_sources_file) as json_file:
     data = json.load(json_file)
     for r in data:
         radiation_X = np.append(radiation_X,float(r['x']))
         radiation_Y = np.append(radiation_Y,float(r['y']))
-        radiation_Z = np.append(radiation_Z,float(r['intensity']))
+        radiation_intensity = np.append(radiation_intensity,float(r['intensity']))
 
-# Plot the radiation sources
-radiation_points = ax.scatter(radiation_X,radiation_Y,radiation_Z, color="red")
+### Compute metrics
 
-# Show plot
-ax.set_xlabel("X")
-ax.set_ylabel("Y")
-ax.set_zlabel("Radiation level")
-ax.set_zlim([0, 1])
-plt.show()
+# Number of steps
+number_of_steps = int(result_step[0])
+print("Number of steps = " + str(number_of_steps))
+# Number of cases explored
+number_of_cases_explored = len(lines)
+print("Number of cases explored = " + str(number_of_cases_explored))
+
+# Belief error
+belief_error = 0.0
+for i in range(0, len(result_X)):
+    # data
+    x = result_X[i]
+    y = result_Y[i]
+    belief = result_belief[i]
+    # gt belief
+    total_radiation = 0.0
+    for j in range(0, len(radiation_X)):
+        r_x = radiation_X[j]
+        r_y = radiation_Y[j]
+        r_intensity = radiation_intensity[j]
+        distance = math.sqrt((r_y-y)**2 + (r_x-x)**2)
+        radiation = r_intensity / (1 + distance**2)
+        if (radiation < 0.0):
+            radiation = 0.0
+        elif (radiation > 1.0):
+            radiation = 1.0
+        total_radiation = total_radiation + radiation
+    error = abs(total_radiation - belief)
+    belief_error = belief_error + error
+average_belief_error = belief_error / len(result_X)
+print("Average error = " + str(average_belief_error))
+
+# Banwidth
