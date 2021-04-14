@@ -12,6 +12,7 @@ namespace buzz_drone_sim {
 
 const std::string RESULT_FILE = "results/result.txt";
 const std::string RADIATION_SOURCES_FILE = "data/radiation_sources.json";
+const std::string DATA_TRANSMITTED_FILE = "results/data_transmitted.txt";
 
 /****************************************/
 /****************************************/
@@ -25,6 +26,7 @@ CBuzzControllerDroneSim::CBuzzControllerDroneSim() : CBuzzControllerSpiri() {
    random_engine_.seed(duration.count());
 
    remove(RESULT_FILE.c_str());
+   remove(DATA_TRANSMITTED_FILE.c_str());
 }
 
 /****************************************/
@@ -121,7 +123,7 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
 /****************************************/
 /****************************************/
 
-void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data, const int& total_data, const int& step){
+void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data, const int& step){
    std::string parsed_key = key;
    std::replace(parsed_key.begin(), parsed_key.end(), '_', ' ');
    std::stringstream ss(parsed_key);
@@ -132,7 +134,18 @@ void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data
    result_file.open(RESULT_FILE, std::ios::out | std::ios::app);
 
    float weight = 1.0;
-   result_file << x << " " << y << " " << data << " " << weight << " " << total_data << " " << step << std::endl;
+   result_file << x << " " << y << " " << data << " " << weight << " " << step << std::endl;
+}
+
+/****************************************/
+/****************************************/
+
+void CBuzzControllerDroneSim::LogDataSize(const int& total_data, const int& step){
+   
+   std::ofstream result_file;
+   result_file.open(DATA_TRANSMITTED_FILE, std::ios::out | std::ios::app);
+
+   result_file << total_data << " " << step << std::endl;
 }
 
 }

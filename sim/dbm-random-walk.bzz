@@ -27,7 +27,7 @@ function init_stigmergies() {
 function update_risk() {
   new_value = get_radiation_intensity()
   current_key = get_current_key()
-  if (stigmergy_risk.has(current_key)){
+  if (stigmergy_risk.get(current_key) != nil){
     new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
   }
   stigmergy_risk.put(current_key, new_value)
@@ -69,11 +69,12 @@ function step() {
 
       # Find next position
       random_search()
+      log_datasize(debug.msgqueue.total, current_step)
     }
   } 
   else if (current_step == EXPERIMENT_LENGHT and id == 0) {
     stigmergy_risk.foreach(function(key, data, robot){
-      log_datum(key, data, debug.msgqueue.total, current_step)
+      log_datum(key, data, current_step)
     })
   }
   current_step = current_step + 1
