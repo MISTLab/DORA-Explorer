@@ -1,0 +1,90 @@
+include "buzz_includes/buzz_utils/vec2.bzz"
+include "buzz_includes/buzz_utils/string.bzz"
+include "config/DBM-SMS/parameters.bzz"
+include "buzz_includes/DBM-SMS/global_variables.bzz"
+include "buzz_includes/debug.bzz"
+
+
+ARENA_SIZE_X = 50
+ARENA_SIZE_Y = 50
+
+var stigmergy_risk
+var stigmergy_exploration
+
+function log_metrics(){
+  if (debug.msgqueue != nil) {
+    log_datasize(debug.msgqueue.total, current_step)
+  }
+  if (id == 0) {
+    stigmergy_risk.foreach(function(key, data, robot){
+      log_datum(key, data, current_step)
+    })
+  }
+}
+
+function init_stigmergies() {
+  stigmergy_risk = stigmergy.create(1)
+  stigmergy_risk.onconflict(function(k, l, r){
+    return l
+    })
+
+  stigmergy_exploration = stigmergy.create(2)
+  stigmergy_exploration.onconflict(function(k, l, r){
+    return l
+    })
+}
+
+function update_risk() {
+  new_value = get_radiation_intensity()
+  current_key = get_current_key()
+  if (stigmergy_risk.get(current_key) != nil){
+    new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
+  }
+  stigmergy_risk.put(current_key, new_value)
+}
+
+function update_exploration() {
+  stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
+}
+
+# Executed at init time
+function init() {
+  # Take off command for the Spiri drone model
+  takeoff()
+
+  # Show trajectory for debugging
+  show_colored_trajectory(NUMBER_OF_ROBOTS)
+
+  # Set first search position
+  next_position.x = uniform(SEARCH_SPACE.minx, SEARCH_SPACE.maxx)
+  next_position.y = uniform(SEARCH_SPACE.miny, SEARCH_SPACE.maxy)
+
+  init_stigmergies()
+}
+
+# Random walk search
+function random_search()
+{ 
+  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED, SEARCH_SPACE.maxx))
+  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED, SEARCH_SPACE.maxy))
+  goto(next_position.x, next_position.y)
+}
+
+# Executed every time step
+function step() {
+  if (current_step < EXPERIMENT_LENGHT) {
+    if (current_step % NEW_POSE_DELAY) {
+      update_exploration()
+      update_risk()
+
+      # Find next position
+      random_search()
+    }
+    log_metrics()
+  }
+  current_step = current_step + 1
+}
+ 
+# Execute at exit
+function destroy() {
+}

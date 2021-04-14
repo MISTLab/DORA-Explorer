@@ -13,7 +13,7 @@ import json
 from random import uniform
 
 
-NB_RADIATION_SOURCES = 2
+NB_RADIATION_SOURCES = 3
 MIN_MAP_X = -10
 MAX_MAP_X = 10
 MIN_MAP_Y = -10

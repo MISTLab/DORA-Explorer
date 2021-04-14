@@ -250,16 +250,19 @@ static int BuzzLogDatum(buzzvm_t vm){
    /* Push the vector components */
    buzzvm_lload(vm, 1);
    buzzvm_lload(vm, 2);
+   buzzvm_lload(vm, 3);
    /* Create a new vector with that */
    std::string key;
    float data;
-   buzzobj_t tkey = buzzvm_stack_at(vm, 2);
-   buzzobj_t tdata = buzzvm_stack_at(vm, 1);
+   int step;
+   buzzobj_t tkey = buzzvm_stack_at(vm, 3);
+   buzzobj_t tdata = buzzvm_stack_at(vm, 2);
+   buzzobj_t tstep = buzzvm_stack_at(vm, 1);
    if(tkey->o.type == BUZZTYPE_STRING) key = tkey->s.value.str;
    else {
       buzzvm_seterror(vm,
                       BUZZVM_ERROR_TYPE,
-                      "log_elevation(x,y): expected %s, got %s in first argument",
+                      "log_datum(key,data,step): expected %s, got %s in first argument",
                       buzztype_desc[BUZZTYPE_STRING],
                       buzztype_desc[tkey->o.type]
          );
@@ -269,9 +272,19 @@ static int BuzzLogDatum(buzzvm_t vm){
    else {
       buzzvm_seterror(vm,
                       BUZZVM_ERROR_TYPE,
-                      "log_elevation(x,y): expected %s, got %s in second argument",
+                      "log_datum(key,data,step): expected %s, got %s in second argument",
                       buzztype_desc[BUZZTYPE_FLOAT],
                       buzztype_desc[tdata->o.type]
+         );
+      return vm->state;
+   }
+   if(tstep->o.type == BUZZTYPE_INT) step = tstep->i.value;
+   else {
+      buzzvm_seterror(vm,
+                      BUZZVM_ERROR_TYPE,
+                      "log_datum(key,data,step): expected %s, got %s in second argument",
+                      buzztype_desc[BUZZTYPE_INT],
+                      buzztype_desc[tstep->o.type]
          );
       return vm->state;
    }
@@ -280,7 +293,51 @@ static int BuzzLogDatum(buzzvm_t vm){
    buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
    buzzvm_gload(vm);
    /* Call function */
-   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->LogDatum(key, data);
+   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->LogDatum(key, data, step);
+
+   return buzzvm_ret0(vm);
+}
+
+/****************************************/
+/****************************************/
+
+static int BuzzLogDataSize(buzzvm_t vm){
+   /* Push the vector components */
+   buzzvm_lload(vm, 1);
+   buzzvm_lload(vm, 2);
+   /* Create a new vector with that */
+   std::string key;
+   float data;
+   int step;
+   int total_data;
+   buzzobj_t ttotal = buzzvm_stack_at(vm, 2);
+   buzzobj_t tstep = buzzvm_stack_at(vm, 1);
+   if(tstep->o.type == BUZZTYPE_INT) step = tstep->i.value;
+   else {
+      buzzvm_seterror(vm,
+                      BUZZVM_ERROR_TYPE,
+                      "log_datum(key,data,step): expected %s, got %s in second argument",
+                      buzztype_desc[BUZZTYPE_INT],
+                      buzztype_desc[tstep->o.type]
+         );
+      return vm->state;
+   }
+   if(ttotal->o.type == BUZZTYPE_INT) total_data = ttotal->i.value;
+   else {
+      buzzvm_seterror(vm,
+                      BUZZVM_ERROR_TYPE,
+                      "log_datum(key,data,step): expected %s, got %s in second argument",
+                      buzztype_desc[BUZZTYPE_INT],
+                      buzztype_desc[ttotal->o.type]
+         );
+      return vm->state;
+   }
+
+   /* Get pointer to the controller */
+   buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
+   buzzvm_gload(vm);
+   /* Call function */
+   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->LogDataSize(total_data, step);
 
    return buzzvm_ret0(vm);
 }
@@ -322,6 +379,10 @@ buzzvm_state CBuzzControllerDroneSim::RegisterFunctions() {
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "log_datum", 1));
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzLogDatum));
+   buzzvm_gstore(m_tBuzzVM);
+
+   buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "log_datasize", 1));
+   buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzLogDataSize));
    buzzvm_gstore(m_tBuzzVM);
 
    return m_tBuzzVM->state;
