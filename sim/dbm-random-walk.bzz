@@ -15,23 +15,22 @@ var stigmergy_exploration
 function init_stigmergies() {
   stigmergy_risk = stigmergy.create(1)
   stigmergy_risk.onconflict(function(k, l, r){
-    merged = l
-    merged_data = l.data * 0.5 + r.data * 0.5
-    merged.data = merged_data
-    return merged
+    return l
     })
 
   stigmergy_exploration = stigmergy.create(2)
   stigmergy_exploration.onconflict(function(k, l, r){
-    merged = l
-    merged_data = l.data * 0.5 + r.data * 0.5
-    merged.data = merged_data
-    return merged
+    return l
     })
 }
 
 function update_risk() {
-  stigmergy_risk.put(get_current_key(), get_radiation_intensity())  # Put timestamp in exploration map
+  new_value = get_radiation_intensity()
+  current_key = get_current_key()
+  if (stigmergy_risk.has(current_key)){
+    new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
+  }
+  stigmergy_risk.put(current_key, new_value)
 }
 
 function update_exploration() {

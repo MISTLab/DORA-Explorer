@@ -48,8 +48,9 @@ print("Number of steps = " + str(number_of_steps))
 number_of_cases_explored = len(lines)
 print("Number of cases explored = " + str(number_of_cases_explored))
 
-# Belief error
+# Belief error and amount of radiation
 belief_error = 0.0
+amount_of_radiation = 0.0
 for i in range(0, len(result_X)):
     # data
     x = result_X[i]
@@ -70,7 +71,7 @@ for i in range(0, len(result_X)):
         total_radiation = total_radiation + radiation
     error = abs(total_radiation - belief)
     belief_error = belief_error + error
+    amount_of_radiation = amount_of_radiation + total_radiation
 average_belief_error = belief_error / len(result_X)
 print("Average error = " + str(average_belief_error))
-
-# Banwidth
+print("Amount of radiation absorbed = " + str(amount_of_radiation))
