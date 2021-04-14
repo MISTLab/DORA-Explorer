@@ -21,8 +21,9 @@ number_of_steps_max = 100
 folders = [result_random_final_folder, result_folder]
 ###
 
-onlyfiles = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
-number_of_runs = len(onlyfiles)/2 
+onlyfiles0 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
+onlyfiles1 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
+number_of_runs = min(len(onlyfiles0)/2, len(onlyfiles1)/2) 
 number_of_folders = len(folders)
 
 number_of_cases_explored = np.zeros((number_of_folders,number_of_runs, number_of_steps_max))
@@ -119,12 +120,12 @@ for folder in range(0, number_of_folders):
             amount_transmitted[folder, run, step] = total_transmission
     
 
-x_axis = np.array([np.array(np.arange(number_of_steps_max)),np.array(np.arange(number_of_steps_max))])
+x_axis = np.arange(number_of_steps_max)
 
 fig = plt.figure()
 ax = fig.gca()
-ax.scatter(x_axis, number_of_cases_explored.mean(1))
-print(number_of_cases_explored.mean(1))
+for f in range(0,number_of_folders):
+    ax.scatter(x_axis, number_of_cases_explored[f,:,:].mean(0))
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of cells explored")
 ax.legend(['Random Walk', 'Gradient'])
@@ -132,7 +133,8 @@ plt.savefig(figures_folder + "explored.png")
 
 fig = plt.figure()
 ax = fig.gca()
-ax.scatter(x_axis, amount_of_radiation.mean(1))
+for f in range(0,number_of_folders):
+    ax.scatter(x_axis, amount_of_radiation[f,:,:].mean(0))
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of radiation")
 ax.legend(['Random Walk', 'Gradient'])
@@ -140,7 +142,8 @@ plt.savefig(figures_folder + "radiation.png")
 
 fig = plt.figure()
 ax = fig.gca()
-ax.scatter(x_axis, average_belief_error.mean(1))
+for f in range(0,number_of_folders):
+    ax.scatter(x_axis, average_belief_error[f,:,:].mean(0))
 ax.set_xlabel("Step")
 ax.set_ylabel("Averasge Belief Error")
 ax.legend(['Random Walk', 'Gradient'])
@@ -148,7 +151,8 @@ plt.savefig(figures_folder + "error.png")
 
 fig = plt.figure()
 ax = fig.gca()
-ax.scatter(x_axis, amount_transmitted.mean(1))
+for f in range(0,number_of_folders):
+    ax.scatter(x_axis, amount_transmitted[f,:,:].mean(0))
 ax.set_xlabel("Step")
 ax.set_ylabel("Total amount of data transmitted (B)")
 ax.legend(['Random Walk', 'Gradient'])
