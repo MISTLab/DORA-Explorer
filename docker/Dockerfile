@@ -102,4 +102,5 @@ RUN cd /home/docker/DBM-SMS/sim/controller &&\
 
 # Compile buzz script
 RUN cd /home/docker/DBM-SMS/sim &&\
-    bzzc dbm-random.bzz
+    bzzc dbm-random-walk.bzz &&\
+    bzzc dbm-gradient.bzz
