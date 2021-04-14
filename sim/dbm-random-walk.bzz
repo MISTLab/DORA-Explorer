@@ -80,8 +80,6 @@ function step() {
       # Find next position
       random_search()
     }
-  }
-  if (current_step <= EXPERIMENT_LENGHT) { # Make sure to log all data transfers (+1 step)
     log_metrics()
   }
   current_step = current_step + 1

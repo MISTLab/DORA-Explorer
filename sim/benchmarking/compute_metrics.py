@@ -8,8 +8,7 @@ import json
 import math
 
 ### Parameters
-result_file = "../results/result.txt"
-data_transmitted_file = "../results/data_transmitted.txt"
+result_folder = "../results/"
 radiation_sources_file = "../data/radiation_sources.json"
 ###
 

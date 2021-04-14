@@ -11,7 +11,7 @@
 namespace buzz_drone_sim {
 
 const std::string RESULT_FILE = "results/result";
-const std::string RADIATION_SOURCES_FILE = "data/radiation_sources.json";
+const std::string RADIATION_SOURCES_FILE = "data/radiation_sources";
 const std::string DATA_TRANSMITTED_FILE = "results/data_transmitted";
 
 /****************************************/
@@ -33,6 +33,7 @@ CBuzzControllerDroneSim::CBuzzControllerDroneSim() : CBuzzControllerSpiri() {
       result_file_name_ = RESULT_FILE + std::to_string( experiment_number ) + ".csv";
    } while( std::ifstream(result_file_name_).good() );
    data_transmitted_file_name_ = DATA_TRANSMITTED_FILE + std::to_string(experiment_number) + ".csv";
+   radiation_file_name_ = RADIATION_SOURCES_FILE + std::to_string(experiment_number) + ".json";
 }
 
 /****************************************/
@@ -99,7 +100,7 @@ float CBuzzControllerDroneSim::GetCurrentElevation(){
 float CBuzzControllerDroneSim::GetRadiationIntensity(){
    Json::Value radiationValues;
    Json::Reader reader;
-   std::ifstream radiationFile(RADIATION_SOURCES_FILE);
+   std::ifstream radiationFile(radiation_file_name_);
 
    reader.parse(radiationFile, radiationValues);
 

@@ -56,7 +56,7 @@ private:
 
    std::default_random_engine random_engine_;
 
-   std::string result_file_name_, data_transmitted_file_name_;
+   std::string result_file_name_, data_transmitted_file_name_, radiation_file_name_;
 
 };
 }
