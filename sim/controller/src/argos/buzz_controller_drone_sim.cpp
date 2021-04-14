@@ -10,9 +10,9 @@
 
 namespace buzz_drone_sim {
 
-const std::string RESULT_FILE = "results/result.txt";
+const std::string RESULT_FILE = "results/result";
 const std::string RADIATION_SOURCES_FILE = "data/radiation_sources.json";
-const std::string DATA_TRANSMITTED_FILE = "results/data_transmitted.txt";
+const std::string DATA_TRANSMITTED_FILE = "results/data_transmitted";
 
 /****************************************/
 /****************************************/
@@ -25,8 +25,14 @@ CBuzzControllerDroneSim::CBuzzControllerDroneSim() : CBuzzControllerSpiri() {
       std::chrono::high_resolution_clock::now() -  previous);
    random_engine_.seed(duration.count());
 
-   remove(RESULT_FILE.c_str());
-   remove(DATA_TRANSMITTED_FILE.c_str());
+   // Find experiment number and file
+   int experiment_number = -1;
+   std::string file_name;
+   do {
+      experiment_number++;
+      result_file_name_ = RESULT_FILE + std::to_string( experiment_number ) + ".csv";
+   } while( std::ifstream(result_file_name_).good() );
+   data_transmitted_file_name_ = DATA_TRANSMITTED_FILE + std::to_string(experiment_number) + ".csv";
 }
 
 /****************************************/
@@ -131,10 +137,10 @@ void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data
    ss >> x >> y;
 
    std::ofstream result_file;
-   result_file.open(RESULT_FILE, std::ios::out | std::ios::app);
+   result_file.open(result_file_name_, std::ios::out | std::ios::app);
 
    float weight = 1.0;
-   result_file << x << " " << y << " " << data << " " << weight << " " << step << std::endl;
+   result_file << x << "," << y << "," << data << "," << weight << "," << step << std::endl;
 }
 
 /****************************************/
@@ -143,9 +149,9 @@ void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data
 void CBuzzControllerDroneSim::LogDataSize(const int& total_data, const int& step){
    
    std::ofstream result_file;
-   result_file.open(DATA_TRANSMITTED_FILE, std::ios::out | std::ios::app);
+   result_file.open(data_transmitted_file_name_, std::ios::out | std::ios::app);
 
-   result_file << total_data << " " << step << std::endl;
+   result_file << total_data << "," << step << std::endl;
 }
 
 }

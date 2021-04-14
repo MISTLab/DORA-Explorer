@@ -11,6 +11,16 @@ ARENA_SIZE_Y = 50
 var stigmergy_risk
 var stigmergy_exploration
 
+function log_metrics(){
+  if (debug.msgqueue != nil) {
+    log_datasize(debug.msgqueue.total, current_step)
+  }
+  if (id == 0) {
+    stigmergy_risk.foreach(function(key, data, robot){
+      log_datum(key, data, current_step)
+    })
+  }
+}
 
 function init_stigmergies() {
   stigmergy_risk = stigmergy.create(1)
@@ -69,13 +79,10 @@ function step() {
 
       # Find next position
       random_search()
-      log_datasize(debug.msgqueue.total, current_step)
     }
-  } 
-  else if (current_step == EXPERIMENT_LENGHT and id == 0) {
-    stigmergy_risk.foreach(function(key, data, robot){
-      log_datum(key, data, current_step)
-    })
+  }
+  if (current_step <= EXPERIMENT_LENGHT) { # Make sure to log all data transfers (+1 step)
+    log_metrics()
   }
   current_step = current_step + 1
 }
