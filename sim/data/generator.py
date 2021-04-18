@@ -13,19 +13,21 @@ import json
 from random import uniform
 
 
-NB_RADIATION_SOURCES = 3
-MIN_MAP_X = -10
-MAX_MAP_X = 10
-MIN_MAP_Y = -10
-MAX_MAP_Y = 10
+NB_SOURCE_FILES = 5
+NB_RADIATION_SOURCES = 5
+MIN_MAP_X = -25
+MAX_MAP_X = 25
+MIN_MAP_Y = -25
+MAX_MAP_Y = 25
 
 def generate_source() -> dict:
     return {"x": uniform(MIN_MAP_X, MAX_MAP_X), "y": uniform(MIN_MAP_Y, MAX_MAP_Y), "intensity": uniform(0.0, 1.0)}
 
 
 def main():
-    with open("radiation_sources.json", "w") as f:
-        json.dump([generate_source() for _ in range(NB_RADIATION_SOURCES)], f, indent=2)
+    for i in range(NB_SOURCE_FILES):
+        with open(f"radiation_sources{i}.json", "w") as f:
+            json.dump([generate_source() for _ in range(NB_RADIATION_SOURCES)], f, indent=2)
 
 
 if __name__ == "__main__":

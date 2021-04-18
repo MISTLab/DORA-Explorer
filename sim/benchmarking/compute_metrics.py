@@ -23,7 +23,7 @@ folders = [result_random_final_folder, result_folder]
 
 onlyfiles0 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
 onlyfiles1 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
-number_of_runs = min(len(onlyfiles0)/2, len(onlyfiles1)/2)
+number_of_runs = int(min(len(onlyfiles0)/2, len(onlyfiles1)/2))
 number_of_folders = len(folders)
 
 number_of_cases_explored = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
@@ -147,7 +147,7 @@ ax = fig.gca()
 for f in range(0, number_of_folders):
     ax.scatter(x_axis, average_belief_error[f, :, :].mean(0))
 ax.set_xlabel("Step")
-ax.set_ylabel("Averasge Belief Error")
+ax.set_ylabel("Average Belief Error")
 ax.legend(['Random Walk', 'Gradient'])
 plt.savefig(figures_folder + "error.png")
 
