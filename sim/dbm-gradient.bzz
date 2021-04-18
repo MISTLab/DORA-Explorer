@@ -5,9 +5,6 @@ include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
 
-ARENA_SIZE_X = 50
-ARENA_SIZE_Y = 50
-
 EXPLORATION_WEIGHT = 1.0
 RISK_WEIGHT = 1.0
 
@@ -24,6 +21,14 @@ function log_metrics(){
       log_datum(key, data, current_step)
     })
   }
+}
+
+function key_to_vec2(key) {
+  split_key = string.split(get_current_key(), "_")
+  x = string.toint(split_key[0])
+  y = string.toint(split_key[1])
+
+  return math.vec2.new(x, y)
 }
 
 function init_stigmergies() {
@@ -115,9 +120,7 @@ function init() {
   # Show trajectory for debugging
   show_colored_trajectory(NUMBER_OF_ROBOTS)
 
-  # Set first search position
-  next_position.x = uniform(SEARCH_SPACE.minx, SEARCH_SPACE.maxx)
-  next_position.y = uniform(SEARCH_SPACE.miny, SEARCH_SPACE.maxy)
+  previous_position = key_to_vec2(get_current_key())
 
   init_stigmergies()
 }
@@ -129,7 +132,10 @@ function move() {
   norm_direction = safe_normalize(math.vec2.add(exploration, risk))
   scaled_direction = math.vec2.scale(norm_direction, SEARCH_SPEED)
 
-  goto(scaled_direction.x, scaled_direction.y)
+  previous_position = key_to_vec2(get_current_key())
+  next_position = math.vec2.add(previous_position, scaled_direction)
+
+  goto(next_position.x, next_position.y)
 }
 
 # Executed every time step
