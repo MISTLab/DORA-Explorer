@@ -2,11 +2,12 @@ include "buzz_includes/buzz_utils/vec2.bzz"
 include "buzz_includes/buzz_utils/string.bzz"
 include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
+include "buzz_includes/DBM-SMS/dispersion.bzz"
 include "buzz_includes/debug.bzz"
 
 
 EXPLORATION_WEIGHT = 1.0
-RISK_WEIGHT = 1.0
+RISK_WEIGHT = 1.5
 
 var stigmergy_risk
 var stigmergy_exploration
@@ -123,6 +124,7 @@ function init() {
   previous_position = key_to_vec2(get_current_key())
 
   init_stigmergies()
+  failed = 0
 }
 
 function move() {
@@ -138,14 +140,22 @@ function move() {
   goto(next_position.x, next_position.y)
 }
 
+function failure() {
+  if (get_radiation_intensity() >= math.rng.uniform(0.0, 5.0)) {
+    return 1
+  }
+  return 0
+}
+
 # Executed every time step
 function step() {
-  if (current_step < EXPERIMENT_LENGHT) {
+  if (current_step < EXPERIMENT_LENGHT and failed == 0) {
     if (current_step % NEW_POSE_DELAY) {
       update_exploration()
       update_risk()
 
       move()
+      failed = failure()
     }
     log_metrics()
   }
