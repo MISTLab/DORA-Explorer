@@ -28,7 +28,7 @@
         <colored_blob_perspective_camera implementation="default" medium="leds" show_rays="true" />
         <positioning                     implementation="default"/>
       </sensors>
-      <params bytecode_file="dbm-random.bo" debug_file="dbm-random.bdb" />
+      <params bytecode_file="dbm-gradient.bo" debug_file="dbm-gradient.bdb" />
     </buzz_controller_drone_sim>
 
 

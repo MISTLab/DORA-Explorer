@@ -73,6 +73,7 @@ ARG CODE_UPDATE_BUZZ=unknown
 # Install Buzz
 RUN git clone https://github.com/lajoiepy/Buzz.git /home/docker/buzz
 RUN cd /home/docker/buzz &&\
+    git checkout bandwidth-log &&\
     mkdir build &&\
     cd build &&\
     cmake -DCMAKE_BUILD_TYPE=Debug ../src &&\
@@ -101,4 +102,5 @@ RUN cd /home/docker/DBM-SMS/sim/controller &&\
 
 # Compile buzz script
 RUN cd /home/docker/DBM-SMS/sim &&\
-    bzzc dbm-random.bzz
+    bzzc dbm-random-walk.bzz &&\
+    bzzc dbm-gradient.bzz

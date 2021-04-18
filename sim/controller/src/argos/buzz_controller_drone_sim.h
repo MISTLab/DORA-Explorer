@@ -44,7 +44,9 @@ public:
 
    float GetRadiationIntensity();
 
-   void LogDatum(const std::string& key, const float& data);
+   void LogDatum(const std::string& key, const float& data, const int& step);
+   
+   void LogDataSize(const int& total_data, const int& step);
 
 protected:
 
@@ -53,6 +55,9 @@ protected:
 private:
 
    std::default_random_engine random_engine_;
+
+   std::string result_file_name_, data_transmitted_file_name_, radiation_file_name_;
+
 };
 }
 #endif

@@ -8,7 +8,6 @@ set(CMAKE_BUILD_TYPE Debug)
 # Options
 #
 option(ARGOS_SIMULATION "Build for ARGoS Simulation" ON)
-
 #
 # Find pkg-config
 #
@@ -48,7 +47,7 @@ target_link_libraries(argos3plugin_buzz_simulator_drone
   jsoncpp
   )
 
-add_compile_options ( -g -rdynamic )
+add_compile_options ( -g -rdynamic)
 set_target_properties(argos3plugin_buzz_simulator_drone PROPERTIES LINKER_LANGUAGE CXX)
 
 install(TARGETS argos3plugin_buzz_simulator_drone LIBRARY DESTINATION ${ARGOS_PREFIX}/lib/argos3)

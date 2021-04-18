@@ -1,6 +1,5 @@
 #include "radiation_source.h"
 
-
 namespace buzz_drone_sim {
 
 /****************************************/
