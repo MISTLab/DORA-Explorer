@@ -139,6 +139,9 @@ function step() {
     })
   }
 }
+
+function reset() {
+}
  
 # Execute at exit
 function destroy() {
