@@ -73,6 +73,7 @@ ARG CODE_UPDATE_BUZZ=unknown
 # Install Buzz
 RUN git clone https://github.com/lajoiepy/Buzz.git /home/docker/buzz
 RUN cd /home/docker/buzz &&\
+    git pull &&\
     git checkout bandwidth-log &&\
     mkdir build &&\
     cd build &&\
