@@ -27,7 +27,8 @@ def generate_source() -> dict:
 def main():
     for i in range(NB_SOURCE_FILES):
         with open(f"radiation_sources{i}.json", "w") as f:
-            json.dump([generate_source() for _ in range(NB_RADIATION_SOURCES)], f, indent=2)
+            sources = {"sources": [generate_source() for _ in range(NB_RADIATION_SOURCES)]}
+            json.dump(sources, f, indent=2)
 
 
 if __name__ == "__main__":

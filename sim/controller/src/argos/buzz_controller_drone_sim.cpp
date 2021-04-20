@@ -104,14 +104,20 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
 
    reader.parse(radiationFile, radiationValues);
 
+   if (radiationValues["sources"].size() <= 0){
+      throw JSON_USE_EXCEPTION;
+   }
+   
    int x = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetX()));
    int y = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetY()));
    
    float totalRadiationIntensity = 0.0;
-   for (auto source : radiationValues){
+
+   for (auto source : radiationValues["sources"]){
       RadiationSource radiation = RadiationSource(source["x"].asFloat(), source["y"].asFloat(), source["intensity"].asFloat());
       totalRadiationIntensity += radiation.GetPerceivedIntensity(x, y);
    }
+
    // Normal distribution (mean, std)
    std::normal_distribution<float> noise_distribution(0.0, 0.05);
    float noise = noise_distribution(random_engine_);
