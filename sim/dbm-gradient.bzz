@@ -7,7 +7,7 @@ include "buzz_includes/debug.bzz"
 
 
 EXPLORATION_WEIGHT = 1.0
-RISK_WEIGHT = 2.0
+RISK_WEIGHT = 1.0
 
 var stigmergy_risk
 var stigmergy_exploration
@@ -58,16 +58,18 @@ function update_exploration() {
 }
 
 function exploration_gradient(adjacent_key) {
-  if (stigmergy_exploration.get(adjacent_key) != nil) {
-    return current_step - stigmergy_exploration.get(adjacent_key)
+  exploration_adjacent = stigmergy_exploration.get(adjacent_key)
+  if (exploration_adjacent!= nil) {
+    return current_step - exploration_adjacent
   } else {
     return current_step
   }
 }
 
 function risk_gradient(adjacent_key) {
-  if (stigmergy_risk.get(adjacent_key) != nil) {
-    return get_radiation_intensity() - stigmergy_risk.get(adjacent_key)
+  risk_adjacent = stigmergy_risk.get(adjacent_key)
+  if (risk_adjacent != nil) {
+    return get_radiation_intensity() - risk_adjacent
   } else {
     return 0.0
   }
@@ -141,9 +143,7 @@ function move() {
 }
 
 function failure() {
-  if (get_radiation_intensity() >= math.rng.uniform(0.0, 1.0)) {
-    log("I failed")
-    log(get_radiation_intensity())
+  if (get_radiation_intensity() >= math.rng.uniform(0.2, 1.0)) {
     return 1
   }
   return 0
@@ -151,8 +151,8 @@ function failure() {
 
 # Executed every time step
 function step() {
-  if (current_step < EXPERIMENT_LENGHT and failed == 0) {
-    if (current_step % NEW_POSE_DELAY) {
+  if (current_step < EXPERIMENT_LENGHT) {
+    if (current_step % NEW_POSE_DELAY and failed == 0) {
       update_exploration()
       update_risk()
 
