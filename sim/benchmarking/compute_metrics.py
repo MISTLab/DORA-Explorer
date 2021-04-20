@@ -63,7 +63,7 @@ for folder in range(0, number_of_folders):
         radiation_intensity = np.array([])
         with open(radiation_sources_file) as json_file:
             data = json.load(json_file)
-            for r in data:
+            for r in data["sources"]:
                 radiation_X = np.append(radiation_X, float(r['x']))
                 radiation_Y = np.append(radiation_Y, float(r['y']))
                 radiation_intensity = np.append(
