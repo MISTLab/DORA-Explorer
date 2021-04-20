@@ -70,6 +70,8 @@ function random_search()
 
 function failure() {
   if (get_radiation_intensity() >= math.rng.uniform(0.0, 1.0)) {
+    log("I failed")
+    log(get_radiation_intensity())
     return 1
   }
   return 0
