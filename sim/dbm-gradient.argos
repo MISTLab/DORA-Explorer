@@ -7,7 +7,8 @@
   <framework>
     <system threads="4" />
     <experiment length="1000"
-                ticks_per_second="5" />
+                ticks_per_second="5" 
+                random_seed="0"/>
     <!--profiling file="profile.txt"
              format="human_readable"
              truncate_file="true" /-->

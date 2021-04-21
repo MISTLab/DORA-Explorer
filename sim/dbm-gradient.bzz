@@ -6,15 +6,16 @@ include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
 
-EXPLORATION_WEIGHT = 1.0
-RISK_WEIGHT = 1.0
+EXPLORATION_GAIN = 1.0
+RISK_GAIN = 1.0
+EDGE_BUFFER = 5.0
 
 var stigmergy_risk
 var stigmergy_exploration
 
 
 function log_metrics(){
-  if (debug.msgqueue != nil) {
+  if (debug.msgqueue != nil and failed != 1) {
     log_datasize(debug.msgqueue.total, current_step)
   }
   if (id == 0) {
@@ -98,19 +99,30 @@ function gradient(gradient_function){
   var j = -1
   var gradient_vec = math.vec2.new(0.0, 0.0)
 
-  while (i <= 1){
-    j = -1
-    while (j <= 1){
-      if (not(i == 0 and j == 0)){
-        gradient_intensity = gradient_function(get_adjacent_key(i, j))
-        adjacent_gradient = math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity)
+  if (pose.position.x + i < SEARCH_SPACE.maxx - EDGE_BUFFER and 
+      pose.position.x + i > SEARCH_SPACE.minx + EDGE_BUFFER and 
+      pose.position.y + j < SEARCH_SPACE.maxy - EDGE_BUFFER and 
+      pose.position.y + j > SEARCH_SPACE.miny + EDGE_BUFFER) {
 
-        gradient_vec = math.vec2.add(gradient_vec, adjacent_gradient)
+    while (i <= 1){
+      j = -1
+      while (j <= 1){
+        if (not(i == 0 and j == 0)){
+          gradient_intensity = gradient_function(get_adjacent_key(i, j))
+          
+          adjacent_gradient = math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity)
+
+          gradient_vec = math.vec2.add(gradient_vec, adjacent_gradient)
+        }
+        j = j + 1
       }
-      j = j + 1
+      i = i + 1
     }
-    i = i + 1
+
+  } else {
+    gradient_vec = math.vec2.new(-pose.position.x, -pose.position.y)
   }
+  
 
   return safe_normalize(gradient_vec)
 }
@@ -123,22 +135,20 @@ function init() {
   # Show trajectory for debugging
   show_colored_trajectory(NUMBER_OF_ROBOTS)
 
-  previous_position = key_to_vec2(get_current_key())
-
   init_stigmergies()
   failed = 0
   math.rng.setseed(id)
 }
 
 function move() {
-  exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_WEIGHT)
-  risk = math.vec2.scale(gradient(risk_gradient), RISK_WEIGHT)
+  exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_GAIN)
+  risk = math.vec2.scale(gradient(risk_gradient), RISK_GAIN)
 
   norm_direction = safe_normalize(math.vec2.add(exploration, risk))
   scaled_direction = math.vec2.scale(norm_direction, SEARCH_SPEED)
-
-  previous_position = key_to_vec2(get_current_key())
-  next_position = math.vec2.add(previous_position, scaled_direction)
+  
+  next_position.x = pose.position.x + scaled_direction.x
+  next_position.y = pose.position.y + scaled_direction.y
 
   goto(next_position.x, next_position.y)
 }
@@ -160,9 +170,8 @@ function step() {
 
       move()
       failed = failure()
-
-      log_metrics()
     }
+    log_metrics()
   }
   current_step = current_step + 1
 }
