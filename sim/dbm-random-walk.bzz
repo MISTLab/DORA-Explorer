@@ -9,7 +9,7 @@ var stigmergy_risk
 var stigmergy_exploration
 
 function log_metrics(){
-  if (debug.msgqueue != nil) {
+  if (debug.msgqueue != nil and failed != 1) {
     log_datasize(debug.msgqueue.total, current_step)
   }
   if (id == 0) {
@@ -53,8 +53,8 @@ function init() {
   show_colored_trajectory(NUMBER_OF_ROBOTS)
 
   # Set first search position
-  next_position.x = uniform(SEARCH_SPACE.minx, SEARCH_SPACE.maxx)
-  next_position.y = uniform(SEARCH_SPACE.miny, SEARCH_SPACE.maxy)
+  next_position.x = pose.position.x
+  next_position.y = pose.position.y
 
   init_stigmergies()
   failed = 0
@@ -64,8 +64,8 @@ function init() {
 # Random walk search
 function random_search()
 { 
-  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED, SEARCH_SPACE.maxx))
-  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED, SEARCH_SPACE.maxy))
+  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/2, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/2, SEARCH_SPACE.maxx))
+  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/2, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/2, SEARCH_SPACE.maxy))
   goto(next_position.x, next_position.y)
 }
 
@@ -87,9 +87,8 @@ function step() {
 
       random_search()
       failed = failure()
-
-      log_metrics()
     }
+    log_metrics()
   }
   current_step = current_step + 1
 }
