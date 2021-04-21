@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 ### Parameters
-result_folder = "../results/"
+result_folder = "../results/gradient-final/"
 radiation_sources_folder = "../data/"
 result_random_final_folder = "../results/random-walk-final/"
 figures_folder = "figures/"
@@ -30,6 +30,8 @@ number_of_cases_explored = np.zeros((number_of_folders, number_of_runs, number_o
 amount_of_radiation = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 average_belief_error = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 amount_transmitted = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
+number_active_robots_step = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
+scaled_amount_of_radiation = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 
 for folder in range(0, number_of_folders):
     print("---Processing folder " + folders[folder] + "---")
@@ -39,6 +41,25 @@ for folder in range(0, number_of_folders):
         random_data_transmitted_file = folders[folder] + "data_transmitted" + str(run) + ".csv"
         radiation_sources_file = radiation_sources_folder + "radiation_sources" + str(run) + ".json"
         print("------- RUN " + str(run) + " -------")
+
+        ## Amount transmitted
+        result_total_data_transmitted = np.array([])
+        result_step = np.array([])
+        f = open(random_data_transmitted_file, "r")
+        lines = f.readlines()
+        for line in lines:
+            elems = line.split(',')
+            result_total_data_transmitted = np.append(result_total_data_transmitted, float(elems[0]))
+            result_step = np.append(result_step, float(elems[1]))
+            number_active_robots_step[folder, run, int(elems[1])] = number_active_robots_step[folder, run, int(elems[1])] + 1
+
+        number_active_robots_step[folder, run, 0] = number_active_robots_step[folder, run, 1]
+
+        total_transmission = 0.0
+        for i in range(0, len(result_total_data_transmitted)):
+            step = int(result_step[i])
+            total_transmission = total_transmission + result_total_data_transmitted[i] / number_active_robots_step[folder, run, step]
+            amount_transmitted[folder, run, step] = total_transmission
 
         # Read radiation results.
         result_X = np.array([])
@@ -100,29 +121,32 @@ for folder in range(0, number_of_folders):
             error = abs(total_radiation - belief)
             belief_error[step] = belief_error[step] + error
             amount_of_radiation[folder, run, step] = amount_of_radiation[folder, run, step] + total_radiation
+            
 
         for i in range(0, len(number_of_cases_explored[folder, run, :])):
             if (number_of_cases_explored[folder, run, i] != 0):
                 average_belief_error[folder, run, i] = belief_error[i] / number_of_cases_explored[folder, run, i]
+                
+        # Scale radiation
+        scaled_amount_of_radiation[folder, run, 0] = amount_of_radiation[folder, run, 0] / number_active_robots_step[folder, run, 0]
+        for i in range(1, len(number_of_cases_explored[folder, run, :])):
+            if (number_of_cases_explored[folder, run, i] != 0):
+                if number_active_robots_step[folder, run, i] != 0:
+                    scaled_diff = (amount_of_radiation[folder, run, i] - amount_of_radiation[folder, run, i-1]) / number_active_robots_step[folder, run, i]
+                    scaled_amount_of_radiation[folder, run, i] = scaled_amount_of_radiation[folder, run, i-1] + scaled_diff
 
-        ## Amount transmitted
-        result_total_data_transmitted = np.array([])
-        result_step = np.array([])
-        f = open(random_data_transmitted_file, "r")
-        lines = f.readlines()
-        for line in lines:
-            elems = line.split(',')
-            result_total_data_transmitted = np.append(result_total_data_transmitted, float(elems[0]))
-            result_step = np.append(result_step, float(elems[1]))
-
-        total_transmission = 0.0
-        for i in range(0, len(result_total_data_transmitted)):
-            step = int(result_step[i])
-            total_transmission = total_transmission + result_total_data_transmitted[i]
-            amount_transmitted[folder, run, step] = total_transmission
 
 
 x_axis = np.arange(number_of_steps_max)
+
+fig = plt.figure()
+ax = fig.gca()
+for f in range(0, number_of_folders):
+    ax.scatter(x_axis, number_active_robots_step[f, :, :].mean(0))
+ax.set_xlabel("Step")
+ax.set_ylabel("Number of active robots")
+ax.legend(['Random Walk', 'Gradient'])
+plt.savefig(figures_folder + "activerobots.png")
 
 fig = plt.figure()
 ax = fig.gca()
@@ -136,9 +160,9 @@ plt.savefig(figures_folder + "explored.png")
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, amount_of_radiation[f, :, :].mean(0))
+    ax.scatter(x_axis, scaled_amount_of_radiation[f, :, :].mean(0))
 ax.set_xlabel("Step")
-ax.set_ylabel("Amount of radiation")
+ax.set_ylabel("Amount of radiation per robot")
 ax.legend(['Random Walk', 'Gradient'])
 plt.savefig(figures_folder + "radiation.png")
 

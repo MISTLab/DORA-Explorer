@@ -9,6 +9,7 @@ include "buzz_includes/debug.bzz"
 EXPLORATION_GAIN = 1.0
 RISK_GAIN = 1.0
 EDGE_BUFFER = 5.0
+NO_FAIL_DELAY = 10
 
 var stigmergy_risk
 var stigmergy_exploration
@@ -121,6 +122,7 @@ function gradient(gradient_function){
 
   } else {
     gradient_vec = math.vec2.new(-pose.position.x, -pose.position.y)
+    #log("Robot ", id, " too far")
   }
   
 
@@ -154,7 +156,7 @@ function move() {
 }
 
 function failure() {
-  if (math.rng.uniform(0.0, 1.0) < get_radiation_intensity()) {
+  if (current_step > NO_FAIL_DELAY and math.rng.uniform(0.0, 1.0) < get_radiation_intensity()) {
     log("Robot ", id, ": Failure")
     return 1
   }
