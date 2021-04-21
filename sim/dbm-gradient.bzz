@@ -7,7 +7,7 @@ include "buzz_includes/debug.bzz"
 
 
 EXPLORATION_GAIN = 1.0
-RISK_GAIN = 1.0
+RISK_GAIN = 2.0
 EDGE_BUFFER = 5.0
 NO_FAIL_DELAY = 10
 
@@ -100,10 +100,10 @@ function gradient(gradient_function){
   var j = -1
   var gradient_vec = math.vec2.new(0.0, 0.0)
 
-  if (pose.position.x + i < SEARCH_SPACE.maxx - EDGE_BUFFER and 
-      pose.position.x + i > SEARCH_SPACE.minx + EDGE_BUFFER and 
-      pose.position.y + j < SEARCH_SPACE.maxy - EDGE_BUFFER and 
-      pose.position.y + j > SEARCH_SPACE.miny + EDGE_BUFFER) {
+  if (pose.position.x < SEARCH_SPACE.maxx - EDGE_BUFFER and 
+      pose.position.x > SEARCH_SPACE.minx + EDGE_BUFFER and 
+      pose.position.y < SEARCH_SPACE.maxy - EDGE_BUFFER and 
+      pose.position.y > SEARCH_SPACE.miny + EDGE_BUFFER) {
 
     while (i <= 1){
       j = -1
@@ -156,8 +156,10 @@ function move() {
 }
 
 function failure() {
-  if (current_step > NO_FAIL_DELAY and math.rng.uniform(0.0, 1.0) < get_radiation_intensity()) {
-    log("Robot ", id, ": Failure")
+  rand = math.rng.uniform(0.2, 1.0)
+  intensity = get_radiation_intensity()
+  if (current_step > NO_FAIL_DELAY and rand < intensity) {
+    log("Robot ", id, ": Failure with ", intensity," > ", rand)
     return 1
   }
   return 0
