@@ -71,9 +71,11 @@ function random_search()
 }
 
 function failure() {
-  draw = math.rng.uniform(0.0, 1.0)
-  if (current_step > NO_FAIL_DELAY and draw < get_radiation_intensity()) {
-    log("Robot ", id, ": Failure")    
+  rand = math.rng.uniform(0.2, 1.0)
+  intensity = get_radiation_intensity()
+
+  if (current_step > NO_FAIL_DELAY and rand < intensity) {
+    log("Robot ", id, ": Failure with ", intensity," > ", rand)   
     return 1
   }
   return 0
