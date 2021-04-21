@@ -119,11 +119,11 @@ float CBuzzControllerDroneSim::GetRadiationIntensity(){
    }
 
    // Normal distribution (mean, std)
-   std::normal_distribution<float> noise_distribution(0.0, 0.05);
-   float noise = noise_distribution(random_engine_);
+   /*std::normal_distribution<float> noise_distribution(0.0, 0.05);
+   float noise = noise_distribution(random_engine_);*/
 
    // Compute belief elem [0,1]
-   float radiation_belief = totalRadiationIntensity + noise;
+   float radiation_belief = totalRadiationIntensity; // + noise;
    if (radiation_belief < 0.0) {
       radiation_belief = 0.0;
    } else if (radiation_belief > 1.0) {
@@ -147,7 +147,7 @@ void CBuzzControllerDroneSim::LogDatum(const std::string& key, const float& data
    result_file.open(result_file_name_, std::ios::out | std::ios::app);
 
    float weight = 1.0;
-   result_file << x << "," << y << "," << data << "," << weight << "," << step << std::endl;
+   result_file << x << "," << y << "," << data << "," << weight << "," << step << "," << m_unRobotId << std::endl;
 }
 
 /****************************************/
@@ -158,7 +158,7 @@ void CBuzzControllerDroneSim::LogDataSize(const int& total_data, const int& step
    std::ofstream result_file;
    result_file.open(data_transmitted_file_name_, std::ios::out | std::ios::app);
 
-   result_file << total_data << "," << step << std::endl;
+   result_file << total_data << "," << step << "," << m_unRobotId << std::endl;
 }
 
 }

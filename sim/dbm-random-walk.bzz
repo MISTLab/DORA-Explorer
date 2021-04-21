@@ -32,7 +32,7 @@ function init_stigmergies() {
 }
 
 function update_risk() {
-  new_value = get_radiation_intensity()
+  new_value = get_radiation_intensity() + math.rng.gaussian(0,0.1)
   current_key = get_current_key()
   if (stigmergy_risk.get(current_key) != nil){
     new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
@@ -58,6 +58,7 @@ function init() {
 
   init_stigmergies()
   failed = 0
+  math.rng.setseed(id)
 }
 
 # Random walk search
@@ -69,7 +70,9 @@ function random_search()
 }
 
 function failure() {
-  if (get_radiation_intensity() >= math.rng.uniform(0.2, 1.0)) {
+  draw = math.rng.uniform(0.0, 1.0)
+  if (draw < get_radiation_intensity()) {
+    log("Robot ", id, ": Failure")    
     return 1
   }
   return 0
@@ -84,8 +87,9 @@ function step() {
 
       random_search()
       failed = failure()
+
+      log_metrics()
     }
-    log_metrics()
   }
   current_step = current_step + 1
 }
