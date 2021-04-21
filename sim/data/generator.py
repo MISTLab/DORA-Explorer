@@ -21,7 +21,7 @@ MIN_MAP_Y = -25
 MAX_MAP_Y = 25
 
 def generate_source() -> dict:
-    return {"x": uniform(MIN_MAP_X, MAX_MAP_X), "y": uniform(MIN_MAP_Y, MAX_MAP_Y), "intensity": uniform(0.0, 0.2)}
+    return {"x": uniform(MIN_MAP_X, MAX_MAP_X), "y": uniform(MIN_MAP_Y, MAX_MAP_Y), "intensity": uniform(0.0, 1.0)}
 
 
 def main():
