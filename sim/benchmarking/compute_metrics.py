@@ -180,6 +180,6 @@ ax = fig.gca()
 for f in range(0, number_of_folders):
     ax.scatter(x_axis, amount_transmitted[f, :, :].mean(0))
 ax.set_xlabel("Step")
-ax.set_ylabel("Total amount of data transmitted (B)")
+ax.set_ylabel("Amount of data transmitted per robot (B)")
 ax.legend(['Random Walk', 'Gradient'])
 plt.savefig(figures_folder + "transmitted.png")
