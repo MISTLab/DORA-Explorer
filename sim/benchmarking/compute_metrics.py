@@ -138,11 +138,12 @@ for folder in range(0, number_of_folders):
 
 
 x_axis = np.arange(number_of_steps_max)
+colors = ["lightcoral", "cornflowerblue"]
 
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, number_active_robots_step[f, :, :].mean(0))
+    ax.scatter(x_axis, number_active_robots_step[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of active robots")
 ax.legend(['Random Walk', 'Gradient'])
@@ -151,7 +152,7 @@ plt.savefig(figures_folder + "activerobots.png")
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, number_of_cases_explored[f, :, :].mean(0))
+    ax.scatter(x_axis, number_of_cases_explored[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of cells explored")
 ax.legend(['Random Walk', 'Gradient'])
@@ -160,7 +161,7 @@ plt.savefig(figures_folder + "explored.png")
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, scaled_amount_of_radiation[f, :, :].mean(0))
+    ax.scatter(x_axis, scaled_amount_of_radiation[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of radiation per robot")
 ax.legend(['Random Walk', 'Gradient'])
@@ -169,7 +170,7 @@ plt.savefig(figures_folder + "radiation.png")
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, average_belief_error[f, :, :].mean(0))
+    ax.scatter(x_axis, average_belief_error[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Average Belief Error")
 ax.legend(['Random Walk', 'Gradient'])
@@ -178,7 +179,7 @@ plt.savefig(figures_folder + "error.png")
 fig = plt.figure()
 ax = fig.gca()
 for f in range(0, number_of_folders):
-    ax.scatter(x_axis, amount_transmitted[f, :, :].mean(0))
+    ax.scatter(x_axis, amount_transmitted[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of data transmitted per robot (B)")
 ax.legend(['Random Walk', 'Gradient'])
