@@ -13,4 +13,4 @@ To evaluate the results:
 - The resulting figures will appear in `/home/docker/DBM-SMS/sim/benchmarking/figures`
 
 If you already have argos3 and buzz installed on your computer you can simply clone the repository and build the C++ controller in `/home/docker/DBM-SMS/sim/controller/`.
-If you want communication benchmarking you also need to install this buzz version: https://github.com/lajoiepy/Buzz.git
+If you want communication benchmarking you also need to install this buzz version: https://github.com/lajoiepy/Buzz.git on branch `bandwidth-log`
