@@ -146,7 +146,7 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, number_active_robots_step[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of active robots")
-ax.legend(['Random Walk', 'Gradient'])
+ax.legend(['Random Walk', 'DORA'])
 plt.savefig(figures_folder + "activerobots.png")
 
 fig = plt.figure()
