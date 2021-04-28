@@ -64,13 +64,13 @@ for folder in range(0, number_of_folders):
                     radiation_intensity, float(r['intensity']))
                 
         #Plot results
-        belief_map = np.zeros((map_size,map_size))
+        belief_map = np.zeros((map_size + 1,map_size + 1))
         for i in range(len(result_belief)):
-            belief_map[int(result_Y[i]+ map_size/2 -1), int(result_X[i]+ map_size/2 -1)] = result_belief[i]
+            belief_map[int(result_Y[i]+ map_size/2), int(result_X[i]+ map_size/2)] = result_belief[i]
 
         plot = sns.heatmap(belief_map, xticklabels=5, yticklabels=5, cmap="Blues")
         plot.invert_yaxis()
-        plot.scatter(radiation_X + map_size/2 -1, radiation_Y + map_size/2 -1, marker='*', s=100, color='red')
+        plot.scatter(radiation_X + map_size/2, radiation_Y + map_size/2, marker='*', s=100, color='red')
         
         # Drawing the frame
         for _, spine in plot.spines.items():
