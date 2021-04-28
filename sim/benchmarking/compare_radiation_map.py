@@ -1,20 +1,12 @@
 ###
 # Creation of a heatmap of the belief map contructed by DORA
 ###
-
-#from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import json
 import math
 from os import listdir
 from os.path import isfile, join
-import matplotlib
-
-#matplotlib.use('qt5Agg')
-
-matplotlib.use('Agg')
 
 ### Parameters
 result_folder = "../results/gradient-final/"
