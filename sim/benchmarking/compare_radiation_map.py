@@ -21,8 +21,8 @@ result_folder = "../results/gradient-final/"
 result_random_final_folder = "../results/random-walk-final/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
-number_of_steps_max = 100
-map_size = 50
+number_of_steps_max = 300
+map_size = 30
 folders = [result_random_final_folder, result_folder]
 ###
 

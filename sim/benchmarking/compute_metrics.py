@@ -17,7 +17,7 @@ result_folder = "../results/gradient-final/"
 radiation_sources_folder = "../data/"
 result_random_final_folder = "../results/random-walk-final/"
 figures_folder = "figures/"
-number_of_steps_max = 100
+number_of_steps_max = 300
 folders = [result_random_final_folder, result_folder]
 ###
 
