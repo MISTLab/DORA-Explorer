@@ -7,8 +7,8 @@ include "buzz_includes/debug.bzz"
 
 
 EXPLORATION_GAIN = 1.0
-RISK_GAIN = 2.0
-EDGE_BUFFER = 5.0
+RISK_GAIN = 1.0
+EDGE_BUFFER = 3.0
 NO_FAIL_DELAY = 10
 
 var stigmergy_risk
