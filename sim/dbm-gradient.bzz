@@ -2,7 +2,6 @@ include "buzz_includes/buzz_utils/vec2.bzz"
 include "buzz_includes/buzz_utils/string.bzz"
 include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
-#include "buzz_includes/DBM-SMS/dispersion.bzz"
 include "buzz_includes/debug.bzz"
 
 
@@ -95,16 +94,19 @@ function safe_normalize(vector) {
   }
 }
 
+function close_to_edge() {
+  return pose.position.x < SEARCH_SPACE.maxx - EDGE_BUFFER and 
+         pose.position.x > SEARCH_SPACE.minx + EDGE_BUFFER and 
+         pose.position.y < SEARCH_SPACE.maxy - EDGE_BUFFER and 
+         pose.position.y > SEARCH_SPACE.miny + EDGE_BUFFER
+}
+
 function gradient(gradient_function){
   var i = -1
   var j = -1
   var gradient_vec = math.vec2.new(0.0, 0.0)
 
-  if (pose.position.x < SEARCH_SPACE.maxx - EDGE_BUFFER and 
-      pose.position.x > SEARCH_SPACE.minx + EDGE_BUFFER and 
-      pose.position.y < SEARCH_SPACE.maxy - EDGE_BUFFER and 
-      pose.position.y > SEARCH_SPACE.miny + EDGE_BUFFER) {
-
+  if (not close_to_edge()) {
     while (i <= 1){
       j = -1
       while (j <= 1){
@@ -122,9 +124,7 @@ function gradient(gradient_function){
 
   } else {
     gradient_vec = math.vec2.new(-pose.position.x, -pose.position.y)
-    #log("Robot ", id, " too far")
   }
-  
 
   return safe_normalize(gradient_vec)
 }
