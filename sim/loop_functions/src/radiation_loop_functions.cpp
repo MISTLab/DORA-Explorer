@@ -34,7 +34,7 @@ void CRadiationLoopFunctions::Init(TConfigurationNode &t_node) {
         /* Create radiation entities */
         for (auto source : this->sources) {
             m_cVisibleRadiation.push_back(
-                CCylinderEntity("c" + std::to_string((int)(source.GetCoordinates().GetX())) + "_" + std::to_string((int)(source.GetCoordinates().GetY())) + "_" + std::to_string((int)(source.GetIntensity())),
+                CCylinderEntity("c" + source.ToString(),
                                 source.GetCoordinates(),
                                 CQuaternion(),
                                 false,

@@ -25,4 +25,12 @@ CVector3 RadiationSource::GetCoordinates() {
     return CVector3(this->x, this->y, 0.0);
 }
 
+std::string RadiationSource::ToString() {
+    return std::to_string((int)(this->GetCoordinates().GetX())) +
+           "_" +
+           std::to_string((int)(this->GetCoordinates().GetY())) +
+           "_" +
+           std::to_string((int)(this->GetIntensity()));
+}
+
 }

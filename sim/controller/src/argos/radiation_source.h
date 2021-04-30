@@ -17,6 +17,7 @@ class RadiationSource
         float GetIntensity();
         float GetPerceivedIntensity(const int x, const int y);
         CVector3 GetCoordinates();
+        std::string ToString();
 };
 
 }
