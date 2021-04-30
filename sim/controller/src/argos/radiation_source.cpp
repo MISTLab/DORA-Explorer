@@ -21,4 +21,8 @@ float RadiationSource::GetPerceivedIntensity(const int x, const int y) {
     return this->intensity / (1 + 0.20*pow(distance, 2.0));
 }
 
+CVector3 RadiationSource::GetCoordinates() {
+    return CVector3(this->x, this->y, 0.0);
+}
+
 }

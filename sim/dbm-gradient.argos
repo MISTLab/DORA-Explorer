@@ -35,6 +35,14 @@
 
   </controllers>
 
+
+  <!-- ****************** -->
+  <!-- * Loop Functions * -->
+  <!-- ****************** -->
+  <loop_functions library="loop_functions/radiation.so" label="radiation_loop_functions">
+    <radiation radius="1.0"/>
+  </loop_functions>
+
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
