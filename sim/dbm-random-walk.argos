@@ -18,7 +18,6 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-
     <buzz_controller_drone_sim id="drone_controller">
       <actuators>
         <quadrotor_position implementation="default" />
@@ -31,9 +30,14 @@
       </sensors>
       <params bytecode_file="dbm-random-walk.bo" debug_file="dbm-random-walk.bdb" />
     </buzz_controller_drone_sim>
-
-
   </controllers>
+
+  <!-- ****************** -->
+  <!-- * Loop Functions * -->
+  <!-- ****************** -->
+  <loop_functions library="libargos3plugin_loop_functions.so" label="radiation_loop_functions">
+    <radiation radius="1.0"/>
+  </loop_functions>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->

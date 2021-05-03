@@ -1,9 +1,10 @@
 #ifndef FORAGING_LOOP_FUNCTIONS_H
 #define FORAGING_LOOP_FUNCTIONS_H
 
-#include "radiation_source.h"
+#include "../../../controller/src/argos/radiation_source.h"
 
 #include <argos3/core/simulator/loop_functions.h>
+#include <argos3/core/simulator/simulator.h>
 #include <argos3/core/utility/math/range.h>
 #include <argos3/core/utility/math/rng.h>
 #include <argos3/plugins/simulator/entities/cylinder_entity.h>

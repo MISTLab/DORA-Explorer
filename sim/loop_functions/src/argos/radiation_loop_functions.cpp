@@ -1,8 +1,4 @@
 #include "radiation_loop_functions.h"
-#include <argos3/core/simulator/simulator.h>
-#include <argos3/core/utility/configuration/argos_configuration.h>
-#include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
-#include <json/json.h>
 
 const std::string RADIATION_SOURCES_FILE = "data/radiation_sources";
 
