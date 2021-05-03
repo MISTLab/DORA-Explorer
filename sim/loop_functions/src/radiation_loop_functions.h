@@ -26,6 +26,7 @@ private:
     std::vector<RadiationSource> sources;
 
     std::vector<RadiationSource> ReadRadiationSources();
+    void AddRadiationCylinder(const RadiationSource source);
 };
 
 #endif

@@ -31,19 +31,23 @@ void CRadiationLoopFunctions::Init(TConfigurationNode &t_node) {
         TConfigurationNode &tRadiation = GetNode(t_node, "radiation");
         GetNodeAttribute(tRadiation, "radius", m_fRadiationRadius);
 
-        /* Create radiation entities */
         for (auto source : this->sources) {
-            m_cVisibleRadiation.push_back(
-                CCylinderEntity("c" + source.ToString(),
-                                source.GetCoordinates(),
-                                CQuaternion(),
-                                false,
-                                m_fRadiationRadius,
-                                1.0));
+           AddRadiationCylinder(source);
         }
     } catch (CARGoSException &ex) {
         THROW_ARGOSEXCEPTION_NESTED("Error parsing loop functions!", ex);
     }
+}
+
+void CRadiationLoopFunctions::AddRadiationCylinder(RadiationSource source) {
+    CCylinderEntity* cylinder = new CCylinderEntity("c" + source.ToString(),
+                                                    source.GetCoordinates(),
+                                                    CQuaternion(),
+                                                    false,
+                                                    m_fRadiationRadius,
+                                                    1.0);
+
+   AddEntity(*cylinder);
 }
 
 std::vector<RadiationSource> CRadiationLoopFunctions::ReadRadiationSources() {
