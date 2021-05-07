@@ -1,0 +1,155 @@
+include "buzz_includes/buzz_utils/vec2.bzz"
+include "buzz_includes/buzz_utils/string.bzz"
+include "config/DBM-SMS/parameters.bzz"
+include "buzz_includes/DBM-SMS/global_variables.bzz"
+include "buzz_includes/debug.bzz"
+
+
+var stigmergy_risk
+var stigmergy_exploration
+NO_FAIL_DELAY = 10
+
+function log_metrics(){
+  if (debug.msgqueue != nil and failed != 1) {
+    log_datasize(debug.msgqueue.total, current_step)
+  }
+  if (id == 0) {
+    stigmergy_risk.foreach(function(key, data, robot){
+      log_datum(key, data, current_step)
+    })
+  }
+}
+
+function init_stigmergies() {
+  stigmergy_risk = stigmergy.create(1)
+  stigmergy_risk.onconflict(function(k, l, r){
+    return l
+    })
+
+  stigmergy_exploration = stigmergy.create(2)
+  stigmergy_exploration.onconflict(function(k, l, r){
+    return l
+    })
+}
+
+function update_risk() {
+  new_value = get_radiation_intensity() + math.rng.gaussian(0,0.1)
+  current_key = get_current_key()
+  if (stigmergy_risk.get(current_key) != nil){
+    new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
+  }
+  stigmergy_risk.put(current_key, new_value)
+}
+
+function update_exploration() {
+  stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
+}
+
+
+function failure() {
+  rand = math.rng.uniform(0.2, 1.0)
+  intensity = get_radiation_intensity()
+
+  if (current_step > NO_FAIL_DELAY and rand < intensity) {
+    log("Robot ", id, ": Failure with ", intensity," > ", rand)   
+    return 1
+  }
+  return 0
+}
+
+function get_adjacent_key(i, j) {
+  split_key = string.split(get_current_key(), "_")
+  key_x = string.toint(split_key[0]) + i
+  key_y = string.toint(split_key[1]) + j
+
+  return string.concat(string.tostring(key_x), "_", string.tostring(key_y))
+}
+
+# Safely normalize a vector. 
+# If input vector is (0, 0), return a random vector to avoid division by zero.
+function safe_normalize(vector) {
+  if (vector.x == 0 and vector.y == 0) {
+    return math.vec2.new(math.rng.uniform(-0.5, 0.5), math.rng.uniform(-0.5, 0.5))
+  } else {
+    return math.vec2.norm(vector)
+  }
+}
+
+function find_closest_frontier(){
+  var frontier_found = 0
+  var scan_distance = 1
+  var frontier_candidates = {}
+
+  while (not frontier_found){
+    var i = -scan_distance
+    var j = -scan_distance
+    var frontier_vec = math.vec2.new(0.0, 0.0)
+    var frontier_counter = 0
+
+    while (i <= scan_distance){
+      j = -scan_distance
+      while (j <= scan_distance){
+        if (stigmergy_exploration.get(get_adjacent_key(i,j)) == nil){
+          frontier_candidates[frontier_counter] = math.vec2.new(i,j)
+          frontier_counter = frontier_counter + 1
+          frontier_found = 1
+        }
+        j = j + 1
+      }
+      i = i + 1
+    }
+    scan_distance = scan_distance + 1
+  }
+  if (frontier_found){
+    return safe_normalize(frontier_candidates[math.rng.uniform(size(frontier_candidates))])
+  }
+
+  return nil
+}
+
+function move() {
+  frontier = find_closest_frontier()
+  if (frontier != nil) {
+    scaled_direction = math.vec2.scale(frontier, SEARCH_SPEED)
+  
+    next_position.x = pose.position.x + scaled_direction.x
+    next_position.y = pose.position.y + scaled_direction.y
+
+    goto(next_position.x, next_position.y)
+  }
+}
+
+# Executed at init time
+function init() {
+  # Take off command for the Spiri drone model
+  takeoff()
+
+  # Show trajectory for debugging
+  show_colored_trajectory(NUMBER_OF_ROBOTS)
+
+  # Set first position
+  next_position.x = pose.position.x
+  next_position.y = pose.position.y
+
+  init_stigmergies()
+  failed = 0
+  math.rng.setseed(id)
+}
+
+# Executed every time step
+function step() {
+  if (current_step < EXPERIMENT_LENGHT) {
+    if (current_step % NEW_POSE_DELAY and failed == 0) {
+      update_exploration()
+      update_risk()
+      move()
+      failed = failure()
+    }
+    log_metrics()
+  }
+  current_step = current_step + 1
+}
+ 
+# Execute at exit
+function destroy() {
+}
