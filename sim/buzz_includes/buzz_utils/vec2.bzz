@@ -118,3 +118,13 @@ math.vec2.rotate = function(v, a) {
     .y = v.x * math.sin(a) + v.y * math.cos(a)
   }
 }
+
+#
+# Rotates v by angle a (in radians)
+# PARAM v: A vector2
+# PARAM a: An angle (in radians)
+# RETURN: the rotated vector
+#
+math.vec2.print = function(v) {
+  log("(",x,";",y,")")
+}

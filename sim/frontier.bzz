@@ -4,7 +4,7 @@ include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
-
+EDGE_BUFFER = 2.0
 var stigmergy_risk
 var stigmergy_exploration
 NO_FAIL_DELAY = 10
@@ -57,12 +57,16 @@ function failure() {
   return 0
 }
 
-function get_adjacent_key(i, j) {
-  split_key = string.split(get_current_key(), "_")
-  key_x = string.toint(split_key[0]) + i
-  key_y = string.toint(split_key[1]) + j
+function get_key(position) {
+  return string.concat(string.tostring(position.x), "_", string.tostring(position.y))
+}
 
-  return string.concat(string.tostring(key_x), "_", string.tostring(key_y))
+function get_adjacent_position(i, j) {
+  split_key = string.split(get_current_key(), "_")
+  x = string.toint(split_key[0]) + i
+  y = string.toint(split_key[1]) + j
+
+  return math.vec2.new(x,y)
 }
 
 # Safely normalize a vector. 
@@ -73,6 +77,18 @@ function safe_normalize(vector) {
   } else {
     return math.vec2.norm(vector)
   }
+}
+
+function position_in_bounds(position){
+
+  return position.x < SEARCH_SPACE.maxx and
+         position.x > SEARCH_SPACE.minx and 
+         position.y < SEARCH_SPACE.maxy and
+         position.y > SEARCH_SPACE.miny 
+}
+
+function explored_cell(key){
+  return stigmergy_exploration.get(key) != nil
 }
 
 function find_closest_frontier(){
@@ -88,8 +104,11 @@ function find_closest_frontier(){
 
     while (i <= scan_distance){
       j = -scan_distance
+
       while (j <= scan_distance){
-        if (stigmergy_exploration.get(get_adjacent_key(i,j)) == nil){
+        var adjacent_position = get_adjacent_position(i,j)
+
+        if (position_in_bounds(adjacent_position) and (not explored_cell(get_key(adjacent_position)))){
           frontier_candidates[frontier_counter] = math.vec2.new(i,j)
           frontier_counter = frontier_counter + 1
           frontier_found = 1
@@ -102,6 +121,7 @@ function find_closest_frontier(){
   }
   if (frontier_found){
     return safe_normalize(frontier_candidates[math.rng.uniform(size(frontier_candidates))])
+    #return safe_normalize(frontier_candidates[0])
   }
 
   return nil
@@ -109,11 +129,10 @@ function find_closest_frontier(){
 
 function move() {
   frontier = find_closest_frontier()
+
   if (frontier != nil) {
     scaled_direction = math.vec2.scale(frontier, SEARCH_SPEED)
-  
-    next_position.x = pose.position.x + scaled_direction.x
-    next_position.y = pose.position.y + scaled_direction.y
+    next_position = math.vec2.add(pose.position, scaled_direction)
 
     goto(next_position.x, next_position.y)
   }
