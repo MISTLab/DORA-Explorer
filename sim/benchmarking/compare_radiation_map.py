@@ -9,12 +9,12 @@ from os import listdir
 from os.path import isfile, join
 
 ### Parameters
-result_folder = "../results/gradient-final/"
-result_random_final_folder = "../results/random-walk-final/"
+result_folder = "../results/frontier/"
+result_random_final_folder = "../results/frontier/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
-number_of_steps_max = 300
-map_size = 30
+number_of_steps_max = 200
+map_size = 20
 folders = [result_random_final_folder, result_folder]
 ###
 
