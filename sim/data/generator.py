@@ -13,8 +13,8 @@ import json
 from random import uniform
 
 
-NB_SOURCE_FILES = 5
-NB_RADIATION_SOURCES = 2
+NB_SOURCE_FILES = 3
+NB_RADIATION_SOURCES = 3
 MIN_MAP_X = -8
 MAX_MAP_X = 8
 MIN_MAP_Y = -8
