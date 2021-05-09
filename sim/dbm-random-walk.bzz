@@ -71,7 +71,7 @@ function random_search()
 }
 
 function failure() {
-  rand = math.rng.uniform(0.2, 1.0)
+  rand = math.rng.uniform(0.3, 1.0)
   intensity = get_radiation_intensity()
 
   if (current_step > NO_FAIL_DELAY and rand < intensity) {
