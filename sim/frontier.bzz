@@ -4,9 +4,10 @@ include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
-EDGE_BUFFER = 2.0
+EDGE_BUFFER = 1.0
 var stigmergy_risk
 var stigmergy_exploration
+var yaw
 NO_FAIL_DELAY = 10
 
 function log_metrics(){
@@ -47,7 +48,7 @@ function update_exploration() {
 
 
 function failure() {
-  rand = math.rng.uniform(0.2, 1.0)
+  rand = math.rng.uniform(0.5, 1.0)
   intensity = get_radiation_intensity()
 
   if (current_step > NO_FAIL_DELAY and rand < intensity) {
@@ -55,6 +56,10 @@ function failure() {
     return 1
   }
   return 0
+}
+
+function update_yaw(direction){
+  yaw = math.atan(direction.y, direction.x)
 }
 
 function get_key(position) {
@@ -80,11 +85,10 @@ function safe_normalize(vector) {
 }
 
 function position_in_bounds(position){
-
-  return position.x < SEARCH_SPACE.maxx and
-         position.x > SEARCH_SPACE.minx and 
-         position.y < SEARCH_SPACE.maxy and
-         position.y > SEARCH_SPACE.miny 
+  return position.x < SEARCH_SPACE.maxx - EDGE_BUFFER and
+         position.x > SEARCH_SPACE.minx + EDGE_BUFFER and 
+         position.y < SEARCH_SPACE.maxy - EDGE_BUFFER and
+         position.y > SEARCH_SPACE.miny + EDGE_BUFFER
 }
 
 function explored_cell(key){
@@ -94,13 +98,11 @@ function explored_cell(key){
 function find_closest_frontier(){
   var frontier_found = 0
   var scan_distance = 1
-  var frontier_candidates = {}
+  min_angular_diff = 10
 
-  while (not frontier_found){
+  while ((not frontier_found) and (scan_distance < 10)){
     var i = -scan_distance
     var j = -scan_distance
-    var frontier_vec = math.vec2.new(0.0, 0.0)
-    var frontier_counter = 0
 
     while (i <= scan_distance){
       j = -scan_distance
@@ -109,19 +111,24 @@ function find_closest_frontier(){
         var adjacent_position = get_adjacent_position(i,j)
 
         if (position_in_bounds(adjacent_position) and (not explored_cell(get_key(adjacent_position)))){
-          frontier_candidates[frontier_counter] = math.vec2.new(i,j)
-          frontier_counter = frontier_counter + 1
-          frontier_found = 1
+          angular_diff =  math.abs(yaw - math.vec2.angle(math.vec2.new(i,j)))
+
+          if (angular_diff < min_angular_diff){
+            frontier_vec = math.vec2.new(i,j)
+            frontier_found = 1
+            min_angular_diff = angular_diff
+          }
         }
         j = j + 1
       }
       i = i + 1
     }
     scan_distance = scan_distance + 1
+    
+
   }
   if (frontier_found){
-    return safe_normalize(frontier_candidates[math.rng.uniform(size(frontier_candidates))])
-    #return safe_normalize(frontier_candidates[0])
+    return safe_normalize(frontier_vec)
   }
 
   return nil
@@ -135,12 +142,13 @@ function move() {
     next_position = math.vec2.add(pose.position, scaled_direction)
 
     goto(next_position.x, next_position.y)
+    update_yaw(frontier)
   }
 }
 
 # Executed at init time
 function init() {
-  # Take off command for the Spiri drone model
+
   takeoff()
 
   # Show trajectory for debugging
@@ -152,6 +160,7 @@ function init() {
 
   init_stigmergies()
   failed = 0
+  yaw = pose.orientation.yaw
   math.rng.setseed(id)
 }
 
