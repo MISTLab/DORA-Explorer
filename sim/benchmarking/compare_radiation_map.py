@@ -10,7 +10,7 @@ from os.path import isfile, join
 
 ### Parameters
 result_folder = "../results/frontier/"
-result_random_final_folder = "../results/frontier/"
+result_random_final_folder = "../results/random-walk-final/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
 number_of_steps_max = 200

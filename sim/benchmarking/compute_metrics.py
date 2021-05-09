@@ -13,11 +13,11 @@ import matplotlib
 matplotlib.use('Agg')
 
 ### Parameters
-result_folder = "../results/gradient-final/"
+result_folder = "../results/frontier/"
 radiation_sources_folder = "../data/"
 result_random_final_folder = "../results/random-walk-final/"
 figures_folder = "figures/"
-number_of_steps_max = 300
+number_of_steps_max = 200
 folders = [result_random_final_folder, result_folder]
 ###
 
