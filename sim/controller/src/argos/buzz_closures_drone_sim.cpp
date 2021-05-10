@@ -55,47 +55,6 @@ static int BuzzRandUniform(buzzvm_t vm){
 /****************************************/
 /****************************************/
 
-static int BuzzGoto(buzzvm_t vm) {
-   /* Push the vector components */
-   buzzvm_lload(vm, 1);
-   buzzvm_lload(vm, 2);
-   /* Create a new vector with that */
-   CVector2 position;
-   buzzobj_t tX = buzzvm_stack_at(vm, 2);
-   buzzobj_t tY = buzzvm_stack_at(vm, 1);
-   if(tX->o.type == BUZZTYPE_INT) position.SetX(tX->i.value);
-   else if(tX->o.type == BUZZTYPE_FLOAT) position.SetX(tX->f.value);
-   else {
-      buzzvm_seterror(vm,
-                      BUZZVM_ERROR_TYPE,
-                      "goto_abs(x,y): expected %s, got %s in first argument",
-                      buzztype_desc[BUZZTYPE_FLOAT],
-                      buzztype_desc[tX->o.type]
-         );
-      return vm->state;
-   }      
-   if(tY->o.type == BUZZTYPE_INT) position.SetY(tY->i.value);
-   else if(tY->o.type == BUZZTYPE_FLOAT) position.SetY(tY->f.value);
-   else {
-      buzzvm_seterror(vm,
-                      BUZZVM_ERROR_TYPE,
-                      "goto_abs(x,y): expected %s, got %s in second argument",
-                      buzztype_desc[BUZZTYPE_FLOAT],
-                      buzztype_desc[tY->o.type]
-         );
-      return vm->state;
-   }
-   /* Get pointer to the controller */
-   buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
-   buzzvm_gload(vm);
-   /* Call function */
-   reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->GoTo(position);
-   return buzzvm_ret0(vm);
-}
-
-/****************************************/
-/****************************************/
-
 static int BuzzRandGauss(buzzvm_t vm){
 
    buzzvm_lload(vm, 1);
@@ -207,22 +166,6 @@ static int BuzzGetCurrentKey(buzzvm_t vm){
       reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->GetCurrentKey();
 
    buzzvm_pushs(vm, buzzvm_string_register(vm, key_value.c_str(), 1));
-
-   return buzzvm_ret1(vm);
-}
-
-/****************************************/
-/****************************************/
-
-static int BuzzGetCurrentElevation(buzzvm_t vm){
-   /* Get pointer to the controller */
-   buzzvm_pushs(vm, buzzvm_string_register(vm, "controller", 1));
-   buzzvm_gload(vm);
-   /* Call function */
-   float elevation =
-      reinterpret_cast<CBuzzControllerDroneSim*>(buzzvm_stack_at(vm, 1)->u.value)->GetCurrentElevation();
-
-   buzzvm_pushf(vm, elevation);
 
    return buzzvm_ret1(vm);
 }
@@ -347,7 +290,7 @@ static int BuzzLogDataSize(buzzvm_t vm){
 /****************************************/
 
 buzzvm_state CBuzzControllerDroneSim::RegisterFunctions() {
-   CBuzzControllerSpiri::RegisterFunctions();
+   CBuzzControllerKheperaIV::RegisterFunctions();
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "uniform", 1));
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzRandUniform));
@@ -357,20 +300,12 @@ buzzvm_state CBuzzControllerDroneSim::RegisterFunctions() {
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzRandGauss));
    buzzvm_gstore(m_tBuzzVM);
 
-   buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "goto", 1));
-   buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzGoto));
-   buzzvm_gstore(m_tBuzzVM);
-
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "has_reached", 1));
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzHasReached));
    buzzvm_gstore(m_tBuzzVM);
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "get_current_key", 1));
    buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzGetCurrentKey));
-   buzzvm_gstore(m_tBuzzVM);
-
-   buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "get_current_elevation", 1));
-   buzzvm_pushcc(m_tBuzzVM, buzzvm_function_register(m_tBuzzVM, BuzzGetCurrentElevation));
    buzzvm_gstore(m_tBuzzVM);
 
    buzzvm_pushs(m_tBuzzVM, buzzvm_string_register(m_tBuzzVM, "get_radiation_intensity", 1));

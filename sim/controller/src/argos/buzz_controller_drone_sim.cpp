@@ -17,7 +17,7 @@ const std::string DATA_TRANSMITTED_FILE = "results/data_transmitted";
 /****************************************/
 /****************************************/
 
-CBuzzControllerDroneSim::CBuzzControllerDroneSim() : CBuzzControllerSpiri() {
+CBuzzControllerDroneSim::CBuzzControllerDroneSim() : CBuzzControllerKheperaIV() {
    std::chrono::high_resolution_clock::time_point previous = 
       std::chrono::high_resolution_clock::now();
    usleep(10);
@@ -46,21 +46,7 @@ CBuzzControllerDroneSim::~CBuzzControllerDroneSim() {
 /****************************************/
 
 void CBuzzControllerDroneSim::Init(TConfigurationNode& t_node)  {
-   CBuzzControllerSpiri::Init(t_node);
-   m_pcCamera->Enable();
-}
-
-/****************************************/
-/****************************************/
-
-void CBuzzControllerDroneSim::GoTo(const CVector2& position) {
-   CVector3 new_position;
-
-   new_position.SetX(position.GetX());
-   new_position.SetY(position.GetY());
-   new_position.SetZ(5.0f); // To ensure that the quadrotor flies
-   
-   m_pcPropellers->SetAbsolutePosition(new_position);
+   CBuzzControllerKheperaIV::Init(t_node);
 }
 
 /****************************************/
@@ -82,16 +68,6 @@ std::string CBuzzControllerDroneSim::GetCurrentKey(){
    int y = static_cast<int>(std::rint(m_pcPos->GetReading().Position.GetY()));
    std::string key = std::to_string(x) + '_' + std::to_string(y);
    return key;
-}
-
-/****************************************/
-/****************************************/
-
-float CBuzzControllerDroneSim::GetCurrentElevation(){
-   //return m_pcPos->GetReading().Position.GetZ();
-   std::normal_distribution<float> noise_distribution(0.0, 0.1);
-   float noise = noise_distribution(random_engine_);
-   return std::sin(m_pcPos->GetReading().Position.GetX()) + noise;
 }
 
 /****************************************/
