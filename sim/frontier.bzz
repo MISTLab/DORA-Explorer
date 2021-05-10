@@ -9,6 +9,7 @@ var stigmergy_risk
 var stigmergy_exploration
 var yaw
 NO_FAIL_DELAY = 10
+MAX_SCAN_DISTANCE = math.max(SEARCH_SPACE.maxx - SEARCH_SPACE.minx, SEARCH_SPACE.maxy - SEARCH_SPACE.miny)
 
 function log_metrics(){
   if (debug.msgqueue != nil and failed != 1) {
@@ -98,9 +99,9 @@ function explored_cell(key){
 function find_closest_frontier(){
   var frontier_found = 0
   var scan_distance = 1
-  min_angular_diff = 10
+  min_angular_diff = 2.0*math.pi
 
-  while ((not frontier_found) and (scan_distance < 10)){
+  while ((not frontier_found) and (scan_distance < MAX_SCAN_DISTANCE)){
     var i = -scan_distance
     var j = -scan_distance
 
