@@ -1,18 +1,19 @@
 #include "radiation_loop_functions.h"
 
 const std::string RADIATION_SOURCES_FILE = "data/radiation_sources";
+const std::string RESULT_FILE = "results/result";
 
 /****************************************/
 /****************************************/
 
 CRadiationLoopFunctions::CRadiationLoopFunctions() : CLoopFunctions() {
-    /* Find experiment number and file */
+    // Find experiment number and file
     int experiment_number = -1;
-    std::string file_name;
     do
     {
         experiment_number++;
-    } while (std::ifstream(radiation_file_name_).good());
+        result_file_name_ = RESULT_FILE + std::to_string(experiment_number) + ".csv";
+    } while (std::ifstream(result_file_name_).good());
     radiation_file_name_ = RADIATION_SOURCES_FILE + std::to_string(experiment_number) + ".json";
 
     sources = this->ReadRadiationSources();

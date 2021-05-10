@@ -24,6 +24,7 @@ private:
     Real m_fRadiationRadius;
     std::vector<CCylinderEntity> m_cVisibleRadiation;
     std::string radiation_file_name_;
+    std::string result_file_name_;
     std::vector<RadiationSource> sources;
 
     std::vector<RadiationSource> ReadRadiationSources();
