@@ -124,8 +124,6 @@ function find_closest_frontier(){
 
   }
   if (frontier_found){
-    log("yaw: ", pose.orientation.yaw)
-    log("frontier: ",math.vec2.angle(frontier_vec))
     return safe_normalize(frontier_vec)
   }
 
@@ -138,11 +136,9 @@ function move() {
   if (frontier_direction != nil) {
     frontier_direction_local = math.vec2.rotate(frontier_direction, -pose.orientation.yaw)
     scaled_direction = math.vec2.scale(frontier_direction_local, SEARCH_SPEED)
-    log(frontier_direction.x," ", frontier_direction.y)
-    log(frontier_direction_local.x," ", frontier_direction_local.y)
 
     gotoc(scaled_direction.x, scaled_direction.y)
-    #gotoc(20.0,2.0)
+
 
   }
 }
