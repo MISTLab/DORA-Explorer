@@ -13,12 +13,12 @@ import json
 from random import uniform
 
 
-NB_SOURCE_FILES = 3
-NB_RADIATION_SOURCES = 3
-MIN_MAP_X = -8
-MAX_MAP_X = 8
-MIN_MAP_Y = -8
-MAX_MAP_Y = 8
+NB_SOURCE_FILES = 5
+NB_RADIATION_SOURCES = 1
+MIN_MAP_X = -4
+MAX_MAP_X = 4
+MIN_MAP_Y = -4
+MAX_MAP_Y = 4
 
 def generate_source() -> dict:
     return {"x": uniform(MIN_MAP_X, MAX_MAP_X), "y": uniform(MIN_MAP_Y, MAX_MAP_Y), "intensity": uniform(0.0, 1.0)}
