@@ -4,10 +4,9 @@ include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
-EDGE_BUFFER = 1.0
+EDGE_BUFFER = 0.0
 var stigmergy_risk
 var stigmergy_exploration
-var yaw
 NO_FAIL_DELAY = 10
 MAX_SCAN_DISTANCE = math.max(SEARCH_SPACE.maxx - SEARCH_SPACE.minx, SEARCH_SPACE.maxy - SEARCH_SPACE.miny)
 
@@ -59,10 +58,6 @@ function failure() {
   return 0
 }
 
-function update_yaw(direction){
-  yaw = math.atan(direction.y, direction.x)
-}
-
 function get_key(position) {
   return string.concat(string.tostring(position.x), "_", string.tostring(position.y))
 }
@@ -86,10 +81,10 @@ function safe_normalize(vector) {
 }
 
 function position_in_bounds(position){
-  return position.x < SEARCH_SPACE.maxx - EDGE_BUFFER and
-         position.x > SEARCH_SPACE.minx + EDGE_BUFFER and 
-         position.y < SEARCH_SPACE.maxy - EDGE_BUFFER and
-         position.y > SEARCH_SPACE.miny + EDGE_BUFFER
+  return position.x <= SEARCH_SPACE.maxx - EDGE_BUFFER and
+         position.x >= SEARCH_SPACE.minx + EDGE_BUFFER and 
+         position.y <= SEARCH_SPACE.maxy - EDGE_BUFFER and
+         position.y >= SEARCH_SPACE.miny + EDGE_BUFFER
 }
 
 function explored_cell(key){
@@ -112,7 +107,7 @@ function find_closest_frontier(){
         var adjacent_position = get_adjacent_position(i,j)
 
         if (position_in_bounds(adjacent_position) and (not explored_cell(get_key(adjacent_position)))){
-          angular_diff =  math.abs(yaw - math.vec2.angle(math.vec2.new(i,j)))
+          angular_diff =  math.abs(pose.orientation.yaw - math.vec2.angle(math.vec2.new(i,j)))
 
           if (angular_diff < min_angular_diff){
             frontier_vec = math.vec2.new(i,j)
@@ -129,6 +124,8 @@ function find_closest_frontier(){
 
   }
   if (frontier_found){
+    log("yaw: ", pose.orientation.yaw)
+    log("frontier: ",math.vec2.angle(frontier_vec))
     return safe_normalize(frontier_vec)
   }
 
@@ -136,33 +133,32 @@ function find_closest_frontier(){
 }
 
 function move() {
-  frontier = find_closest_frontier()
+  frontier_direction = find_closest_frontier()
 
-  if (frontier != nil) {
-    scaled_direction = math.vec2.scale(frontier, SEARCH_SPEED)
-    next_position = math.vec2.add(pose.position, scaled_direction)
+  if (frontier_direction != nil) {
+    frontier_direction_local = math.vec2.rotate(frontier_direction, -pose.orientation.yaw)
+    scaled_direction = math.vec2.scale(frontier_direction_local, SEARCH_SPEED)
+    log(frontier_direction.x," ", frontier_direction.y)
+    log(frontier_direction_local.x," ", frontier_direction_local.y)
 
-    goto(next_position.x, next_position.y)
-    update_yaw(frontier)
+    gotoc(scaled_direction.x, scaled_direction.y)
+    #gotoc(20.0,2.0)
+
   }
 }
 
 # Executed at init time
 function init() {
-
-  takeoff()
-
   # Show trajectory for debugging
   show_colored_trajectory(NUMBER_OF_ROBOTS)
 
-  # Set first position
-  next_position.x = pose.position.x
-  next_position.y = pose.position.y
-
+  set_leds(0,255,0)
   init_stigmergies()
   failed = 0
-  yaw = pose.orientation.yaw
   math.rng.setseed(id)
+
+  log("Initial yaw: ",pose.orientation.yaw)
+
 }
 
 # Executed every time step
@@ -176,6 +172,12 @@ function step() {
     }
     log_metrics()
   }
+
+  if (current_step > EXPERIMENT_LENGHT or failed != 0){
+    set_wheels(0.0,0.0)
+    set_leds(255,0,0)
+  }
+
   current_step = current_step + 1
 }
  
