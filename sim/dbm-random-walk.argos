@@ -20,15 +20,22 @@
   <controllers>
     <buzz_controller_drone_sim id="drone_controller">
       <actuators>
-        <quadrotor_position implementation="default" />
-        <range_and_bearing  implementation="default" />
+        <differential_steering implementation="default" />
+        <leds                  implementation="default" medium="leds" />
+        <range_and_bearing     implementation="default" />
       </actuators>
       <sensors>
-        <range_and_bearing               implementation="medium" medium="rab" show_rays="false" />
-        <colored_blob_perspective_camera implementation="default" medium="leds" show_rays="true" />
-        <positioning                     implementation="default"/>
+        <kheperaiv_proximity implementation="default" show_rays="true" />
+        <range_and_bearing   implementation="medium" medium="rab"
+                             show_rays="false" noise_std_dev="0" />
+        <positioning         implementation="default" />
       </sensors>
-      <params bytecode_file="dbm-random-walk.bo" debug_file="dbm-random-walk.bdb" />
+      <params bytecode_file="dbm-random-walk.bo" debug_file="dbm-random-walk.bdb">
+        <wheel_turning hard_turn_angle_threshold="90"
+                        soft_turn_angle_threshold="70"
+                        no_turn_angle_threshold="0"
+                        max_speed="20" />
+      </params>
     </buzz_controller_drone_sim>
   </controllers>
 
@@ -36,13 +43,13 @@
   <!-- * Loop Functions * -->
   <!-- ****************** -->
   <loop_functions library="libargos3plugin_loop_functions.so" label="radiation_loop_functions">
-    <radiation radius="1.0"/>
+    <radiation radius="0.25"/>
   </loop_functions>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="20, 20, 4" center="0,0,2"> 
+  <arena size="8, 8, 2" center="0,0,1"> 
     <!-- The effective area, where the robots are allowed is 20x20 -->
     <!--box id="division" size="50, .2, 0.1" movable="false" color="blue">
       <body position="0, -10, 0" orientation="0, 0, 0" />
@@ -50,12 +57,12 @@
 
     <!-- * Initial drones positions * -->
     <distribute>
-      <position method="uniform" min="-8,-8,0" max="8,8,0" />
+      <position method="uniform" min="-3,-3,0" max="3,3,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="8" max_trials="100">
-        <spiri id="sp" rab_range="1000000" rab_data_size="100000">
+      <entity quantity="6" max_trials="100">
+        <kheperaiv id="sp" rab_range="1000000" rab_data_size="100000">
           <controller config="drone_controller" />
-        </spiri>
+        </kheperaiv>
       </entity>
     </distribute>
   </arena>
@@ -83,7 +90,7 @@
     <qt-opengl>
       <camera>
         <placements>
-          <placement index="0" position="0,0,100" look_at="0,0,0" up="0,1,0" lens_focal_length="55" />
+          <placement index="0" position="0,0,100" look_at="0,0,0" up="0,1,0" lens_focal_length="300" />
         </placements>
       </camera>
        <frame_grabbing directory="log/"

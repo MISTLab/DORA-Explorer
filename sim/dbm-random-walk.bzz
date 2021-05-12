@@ -4,7 +4,6 @@ include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
 
-
 var stigmergy_risk
 var stigmergy_exploration
 NO_FAIL_DELAY = 10
@@ -45,29 +44,17 @@ function update_exploration() {
   stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
 }
 
-# Executed at init time
-function init() {
-  # Take off command for the Spiri drone model
-  takeoff()
-
-  # Show trajectory for debugging
-  show_colored_trajectory(NUMBER_OF_ROBOTS)
-
-  # Set first search position
-  next_position.x = pose.position.x
-  next_position.y = pose.position.y
-
-  init_stigmergies()
-  failed = 0
-  math.rng.setseed(id)
-}
-
 # Random walk search
 function random_search()
 { 
-  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/2, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/2, SEARCH_SPACE.maxx))
-  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/2, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/2, SEARCH_SPACE.maxy))
-  goto(next_position.x, next_position.y)
+  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/20, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/20, SEARCH_SPACE.maxx))
+  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/20, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/20, SEARCH_SPACE.maxy))
+
+  next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
+
+  scaled_direction = math.vec2.scale(next_position_local, SEARCH_SPEED)
+
+  gotoc(scaled_direction.x, scaled_direction.y)
 }
 
 function failure() {
@@ -79,6 +66,22 @@ function failure() {
     return 1
   }
   return 0
+}
+
+# Executed at init time
+function init() {
+  # Show trajectory for debugging
+  show_colored_trajectory(NUMBER_OF_ROBOTS)
+
+  # Set first search position
+  next_position.x = pose.position.x
+  next_position.y = pose.position.y 
+
+
+  set_leds(0,255,0)
+  init_stigmergies()
+  failed = 0
+  math.rng.setseed(id)
 }
 
 # Executed every time step
@@ -93,6 +96,12 @@ function step() {
     }
     log_metrics()
   }
+
+  if (current_step > EXPERIMENT_LENGHT or failed != 0){
+    set_wheels(0.0,0.0)
+    set_leds(255,0,0)
+  }
+
   current_step = current_step + 1
 }
  

@@ -8,7 +8,7 @@ SEARCH_SPEED = 20.0
 DELTA_REACHED_POS = 1.0
 
 # Targets parameters
-TARGET_SPEED_MAX = 50.0
+TARGET_SPEED_MAX = 20.0
 TARGET_SPEED_STDEV = 0.5
 
 # Experiment parameters
