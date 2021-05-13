@@ -1,10 +1,10 @@
 # Search space parameters
-SEARCH_SPACE = { .minx = -4.0, .miny = -4.0, .maxx = 4.0, .maxy = 4.0}
+SEARCH_SPACE = { .minx = -8.0, .miny = -8.0, .maxx = 8.0, .maxy = 8.0}
 
 # Searching drones parameters
-NUMBER_OF_ROBOTS = 1
+NUMBER_OF_ROBOTS = 8
 NEW_POSE_DELAY = 10
-SEARCH_SPEED = 20.0
+SEARCH_SPEED = 50.0
 DELTA_REACHED_POS = 1.0
 
 # Targets parameters
@@ -12,5 +12,5 @@ TARGET_SPEED_MAX = 20.0
 TARGET_SPEED_STDEV = 0.5
 
 # Experiment parameters
-EXPERIMENT_LENGHT = 200
+EXPERIMENT_LENGHT = 300
 
