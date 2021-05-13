@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="10" />
-    <experiment length="200"
+    <experiment length="300"
                 ticks_per_second="5" 
                 random_seed="0"/>
     <!--profiling file="profile.txt"
@@ -34,7 +34,7 @@
               <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
                        no_turn_angle_threshold="0"
-                       max_speed="20" />
+                       max_speed="50" />
       </params>
     </buzz_controller_drone_sim>
   </controllers>
@@ -43,23 +43,32 @@
   <!-- * Loop Functions * -->
   <!-- ****************** -->
   <loop_functions library="libargos3plugin_loop_functions.so" label="radiation_loop_functions">
-    <radiation radius="0.25"/>
+    <radiation radius="0.5"/>
   </loop_functions>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="8, 8, 2" center="0,0,1"> 
-    <!-- The effective area, where the robots are allowed is 20x20 -->
-    <!--box id="division" size="50, .2, 0.1" movable="false" color="blue">
-      <body position="0, -10, 0" orientation="0, 0, 0" />
-    </box-->
+  <arena size="16, 16, 2" center="0,0,1">
+
+    <box id="wall_north" size="16,0.1,0.5" movable="false">
+      <body position="0,8,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_south" size="16,0.1,0.5" movable="false">
+      <body position="0,-8,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_east" size="0.1,16,0.5" movable="false">
+      <body position="8,0,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_west" size="0.1,16,0.5" movable="false">
+      <body position="-8,0,0" orientation="0,0,0" />
+    </box>
 
     <!-- * Initial drones positions * -->
     <distribute>
-      <position method="uniform" min="-3,-3,0" max="3,3,0" />
+      <position method="uniform" min="-6,-6,0" max="6,6,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="6" max_trials="100">
+      <entity quantity="8" max_trials="100">
         <kheperaiv id="sp" rab_range="1000000" rab_data_size="100000">
           <controller config="drone_controller" />
         </kheperaiv>
@@ -90,7 +99,7 @@
     <qt-opengl>
       <camera>
         <placements>
-          <placement index="0" position="0,0,100" look_at="0,0,0" up="0,1,0" lens_focal_length="300" />
+          <placement index="0" position="0,0,100" look_at="0,0,0" up="0,1,0" lens_focal_length="100" />
         </placements>
       </camera>
        <frame_grabbing directory="log/"

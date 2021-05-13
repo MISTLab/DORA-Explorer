@@ -6,7 +6,7 @@
   <!-- ************************* -->
 <framework>
     <system threads="10" />
-    <experiment length="200"
+    <experiment length="300"
                 ticks_per_second="5" 
                 random_seed="0"/>
     <!--profiling file="profile.txt"
@@ -34,7 +34,7 @@
               <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
                        no_turn_angle_threshold="0"
-                       max_speed="40" />
+                       max_speed="50" />
       </params>
     </buzz_controller_drone_sim>
   </controllers>

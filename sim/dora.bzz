@@ -130,6 +130,7 @@ function gradient(gradient_function){
     i = i + 1
   }
 
+  #if gradient too small ignore it
   if (math.abs(math.vec2.length(gradient_vec)) < 0.1) {
     return math.vec2.new(0.0, 0.0)
   } else {
