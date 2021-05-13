@@ -153,8 +153,6 @@ function init() {
   failed = 0
   math.rng.setseed(id)
 
-  log("Initial yaw: ",pose.orientation.yaw)
-
 }
 
 # Executed every time step
