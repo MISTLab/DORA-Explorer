@@ -9,17 +9,18 @@ from os import listdir
 from os.path import isfile, join
 
 ### Parameters
-result_folder = "../results/frontier/"
-result_random_final_folder = "../results/random-walk-final/"
+result_folder_frontier = "../results/frontier/"
+result_folder_random = "../results/randomwalk/"
+result_folder_dora = "../results/dora/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
-number_of_steps_max = 200
-map_size = 20
-folders = [result_random_final_folder, result_folder]
+number_of_steps_max = 300
+map_size = 16
+folders = [result_folder_random, result_folder_frontier, result_folder_dora ]
 ###
 
-onlyfiles0 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
-onlyfiles1 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
+onlyfiles0 = [f for f in listdir(result_folder_dora) if isfile(join(result_folder_dora, f))]
+onlyfiles1 = [f for f in listdir(result_folder_dora) if isfile(join(result_folder_dora, f))]
 number_of_runs = int(min(len(onlyfiles0)/2, len(onlyfiles1)/2))
 number_of_folders = len(folders)
 
