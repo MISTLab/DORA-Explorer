@@ -6,7 +6,7 @@ include "buzz_includes/debug.bzz"
 
 var stigmergy_risk
 var stigmergy_exploration
-NO_FAIL_DELAY = 10
+NO_FAIL_DELAY = 20
 
 function log_metrics(){
   if (debug.msgqueue != nil and failed != 1) {
@@ -47,8 +47,8 @@ function update_exploration() {
 # Random walk search
 function random_search()
 { 
-  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/20, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/20, SEARCH_SPACE.maxx))
-  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/20, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/20, SEARCH_SPACE.maxy))
+  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/100, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/100, SEARCH_SPACE.maxx))
+  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/100, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/100, SEARCH_SPACE.maxy))
 
   next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
 

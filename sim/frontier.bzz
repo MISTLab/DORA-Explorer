@@ -7,7 +7,7 @@ include "buzz_includes/debug.bzz"
 EDGE_BUFFER = 0.0
 var stigmergy_risk
 var stigmergy_exploration
-NO_FAIL_DELAY = 10
+NO_FAIL_DELAY = 20
 MAX_SCAN_DISTANCE = math.max(SEARCH_SPACE.maxx - SEARCH_SPACE.minx, SEARCH_SPACE.maxy - SEARCH_SPACE.miny)
 
 function log_metrics(){
