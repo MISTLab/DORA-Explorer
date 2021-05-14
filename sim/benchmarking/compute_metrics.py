@@ -13,16 +13,17 @@ import matplotlib
 matplotlib.use('Agg')
 
 ### Parameters
-result_folder = "../results/frontier/"
+result_folder_frontier = "../results/frontier/"
+result_folder_random = "../results/randomwalk/"
+result_folder_dora = "../results/dora/"
 radiation_sources_folder = "../data/"
-result_random_final_folder = "../results/random-walk-final/"
 figures_folder = "figures/"
-number_of_steps_max = 200
-folders = [result_random_final_folder, result_folder]
+number_of_steps_max = 300
+folders = [result_folder_random, result_folder_frontier, result_folder_dora ]
 ###
 
-onlyfiles0 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
-onlyfiles1 = [f for f in listdir(result_folder) if isfile(join(result_folder, f))]
+onlyfiles0 = [f for f in listdir(result_folder_dora) if isfile(join(result_folder_dora, f))]
+onlyfiles1 = [f for f in listdir(result_folder_dora) if isfile(join(result_folder_dora, f))]
 number_of_runs = int(min(len(onlyfiles0)/2, len(onlyfiles1)/2))
 number_of_folders = len(folders)
 
@@ -138,7 +139,7 @@ for folder in range(0, number_of_folders):
 
 
 x_axis = np.arange(number_of_steps_max)
-colors = ["lightcoral", "cornflowerblue"]
+colors = ["lightcoral","orchid", "cornflowerblue"]
 
 fig = plt.figure()
 ax = fig.gca()
@@ -146,7 +147,7 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, number_active_robots_step[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of active robots")
-ax.legend(['Random Walk', 'DORA'])
+ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "activerobots.png")
 
 fig = plt.figure()
@@ -155,7 +156,7 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, number_of_cases_explored[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of cells explored")
-ax.legend(['Random Walk', 'DORA'])
+ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "explored.png")
 
 fig = plt.figure()
@@ -164,7 +165,7 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, scaled_amount_of_radiation[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of radiation per robot")
-ax.legend(['Random Walk', 'DORA'])
+ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "radiation.png")
 
 fig = plt.figure()
@@ -173,7 +174,7 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, average_belief_error[f, :, :].mean(0), c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Average Belief Error")
-ax.legend(['Random Walk', 'DORA'])
+ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "error.png")
 
 fig = plt.figure()
@@ -182,5 +183,5 @@ for f in range(0, number_of_folders):
     ax.scatter(x_axis, amount_transmitted[f, :, :].mean(0)/1000.0, c=colors[f])
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of data transmitted per robot (kB)")
-ax.legend(['Random Walk', 'DORA'])
+ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "transmitted.png")
