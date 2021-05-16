@@ -13,9 +13,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 ### Parameters
-result_folder_frontier = "../results/frontier/"
-result_folder_random = "../results/randomwalk/"
-result_folder_dora = "../results/dora/"
+result_folder_frontier = "../results/frontier_15/"
+result_folder_random = "../results/randomwalk_15/"
+result_folder_dora = "../results/dora_15/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
 number_of_steps_max = 300
@@ -185,3 +185,23 @@ ax.set_xlabel("Step")
 ax.set_ylabel("Amount of data transmitted per robot (kB)")
 ax.legend(['Random Walk', 'Frontier', 'DORA'])
 plt.savefig(figures_folder + "transmitted.png")
+
+
+
+avg_random = []
+for i in range(number_of_runs):   
+    avg_random.append(amount_transmitted[0, i, :].mean(0)/1000.0)
+    
+print("Random walk: ",np.mean(avg_random)/number_of_steps_max)
+
+avg_frontier = []
+for i in range(number_of_runs):   
+    avg_frontier.append(amount_transmitted[1, i, :].mean(0)/1000.0)
+    
+print("Frontier: ",np.mean(avg_frontier)/number_of_steps_max)
+
+avg_dora = []
+for i in range(number_of_runs):   
+    avg_dora.append(amount_transmitted[2, i, :].mean(0)/1000.0)
+    
+print("Dora: ",np.mean(avg_dora)/number_of_steps_max)
