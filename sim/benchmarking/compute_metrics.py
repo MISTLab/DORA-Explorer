@@ -13,9 +13,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 ### Parameters
-result_folder_frontier = "../results/frontier_5/"
-result_folder_random = "../results/randomwalk_5/"
-result_folder_dora = "../results/dora_5/"
+result_folder_frontier = "../results/frontier_15/"
+result_folder_random = "../results/randomwalk_15/"
+result_folder_dora = "../results/dora_15/"
 radiation_sources_folder = "../data/"
 figures_folder = "figures/"
 number_of_steps_max = 300
@@ -147,7 +147,7 @@ for f in range(0, number_of_folders):
     std = np.array([0.5 * np.nanstd(number_active_robots_step[f, :, i]) for i in range(number_of_steps_max)])
     mean = number_active_robots_step[f, :, :].mean(0)
     ax.scatter(x_axis, mean, c=colors[f])
-    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f])
+    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of active robots")
 ax.legend(['Random Walk', 'Frontier', 'DORA'])
@@ -159,7 +159,7 @@ for f in range(0, number_of_folders):
     std = np.array([0.5 * np.nanstd(number_of_cases_explored[f, :, i]) for i in range(number_of_steps_max)])
     mean = number_of_cases_explored[f, :, :].mean(0)
     ax.scatter(x_axis, mean, c=colors[f])
-    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f])
+    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
 ax.set_xlabel("Step")
 ax.set_ylabel("Number of cells explored")
 ax.legend(['Random Walk', 'Frontier', 'DORA'])
@@ -171,7 +171,7 @@ for f in range(0, number_of_folders):
     std = np.array([0.5 * np.nanstd(scaled_amount_of_radiation[f, :, i]) for i in range(number_of_steps_max)])
     mean = scaled_amount_of_radiation[f, :, :].mean(0)
     ax.scatter(x_axis, mean, c=colors[f])
-    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f])
+    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of radiation per robot")
 ax.legend(['Random Walk', 'Frontier', 'DORA'])
@@ -183,10 +183,10 @@ for f in range(0, number_of_folders):
     std = np.array([0.5 * np.nanstd(average_belief_error[f, :, i]) for i in range(number_of_steps_max)])
     mean = average_belief_error[f, :, :].mean(0)
     ax.scatter(x_axis, mean, c=colors[f])
-    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f])
+    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
 ax.set_xlabel("Step")
 ax.set_ylabel("Average Belief Error")
-ax.legend(['Random Walk', 'Frontier', 'DORA'])
+ax.legend(['Random Walk','Frontier','DORA'])
 plt.savefig(figures_folder + "error.png")
 
 fig = plt.figure()
@@ -195,7 +195,7 @@ for f in range(0, number_of_folders):
     std = np.array([0.5 * np.nanstd(amount_transmitted[f, :, i]) for i in range(number_of_steps_max)])/1000.0
     mean = amount_transmitted[f, :, :].mean(0)/1000.0
     ax.scatter(x_axis, mean, c=colors[f])
-    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f])
+    ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
 ax.set_xlabel("Step")
 ax.set_ylabel("Amount of data transmitted per robot (kB)")
 ax.legend(['Random Walk', 'Frontier', 'DORA'])
