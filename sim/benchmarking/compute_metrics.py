@@ -31,6 +31,7 @@ number_of_cases_explored = np.zeros((number_of_folders, number_of_runs, number_o
 amount_of_radiation = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 average_belief_error = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 amount_transmitted = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
+duration = np.zeros((number_of_folders, number_of_runs))
 number_active_robots_step = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 scaled_amount_of_radiation = np.zeros((number_of_folders, number_of_runs, number_of_steps_max))
 
@@ -61,6 +62,7 @@ for folder in range(0, number_of_folders):
             step = int(result_step[i])
             total_transmission = total_transmission + result_total_data_transmitted[i] / number_active_robots_step[folder, run, step]
             amount_transmitted[folder, run, step] = total_transmission
+            duration[folder,run] = step
 
         # Read radiation results.
         result_X = np.array([])
@@ -205,18 +207,23 @@ plt.savefig(figures_folder + "transmitted.png")
 
 avg_random = []
 for i in range(number_of_runs):   
-    avg_random.append(amount_transmitted[0, i, :].mean(0)/1000.0)
+    avg_random.append(amount_transmitted[0, i, 0:int(duration[0,i])].mean(0)/1000.0/(duration[0,i]))
     
-print("Random walk: ",np.mean(avg_random)/number_of_steps_max)
+std_random = np.std(avg_random)
+print("Random walk: ",np.mean(avg_random), " ", np.mean(std_random))
+
 
 avg_frontier = []
 for i in range(number_of_runs):   
-    avg_frontier.append(amount_transmitted[1, i, :].mean(0)/1000.0)
-    
-print("Frontier: ",np.mean(avg_frontier)/number_of_steps_max)
+    avg_frontier.append(amount_transmitted[1, i, 0:int(duration[1,i])].mean(0)/1000.0/(duration[1,i]))
+
+std_frontier = np.std(avg_frontier)    
+print("Frontier: ",np.mean(avg_frontier), " ", np.mean(std_frontier))
+
 
 avg_dora = []
 for i in range(number_of_runs):   
-    avg_dora.append(amount_transmitted[2, i, :].mean(0)/1000.0)
-    
-print("Dora: ",np.mean(avg_dora)/number_of_steps_max)
+    avg_dora.append(amount_transmitted[2, i, 0:int(duration[2,i])].mean(0)/1000.0/(duration[2,i]))
+
+std_dora = np.std(avg_dora)
+print("Dora: ",np.mean(avg_dora), " ",  np.mean(std_dora))
