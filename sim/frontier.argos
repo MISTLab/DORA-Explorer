@@ -66,12 +66,12 @@
     </box>
 
     <!-- * Interior walls * -->
-    <box id="wall_1" size="7,0.1,0.5" movable="false">
+    <!-- <box id="wall_1" size="7,0.1,0.5" movable="false">
       <body position="-4.4,0,0" orientation="0,0,0" />
     </box>
     <box id="wall_2" size="7,0.1,0.5" movable="false">
       <body position="4.5,0,0" orientation="0,0,0" />
-    </box>
+    </box> -->
 
     <!-- * Random obstacles in the environment * -->
     <distribute>
@@ -84,7 +84,7 @@
 
     <!-- * Initial drones positions * -->
     <distribute>
-      <position method="uniform" min="-7,-7,0" max="-5,-5,0" />
+      <position method="uniform" min="-5,-5,0" max="5,5,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="10" max_trials="100">
         <kheperaiv id="sp" rab_range="1000000" rab_data_size="100000">
