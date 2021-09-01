@@ -59,10 +59,7 @@ function update_exploration() {
 }
 
 function position_in_bounds(position){
-  return position.x <= SEARCH_SPACE.maxx and
-         position.x >= SEARCH_SPACE.minx and 
-         position.y <= SEARCH_SPACE.maxy and
-         position.y >= SEARCH_SPACE.miny 
+  return position.x <= SEARCH_SPACE.maxx and position.x >= SEARCH_SPACE.minx and position.y <= SEARCH_SPACE.maxy and position.y >= SEARCH_SPACE.miny
 }
 
 function exploration_gradient(adjacent_key, i, j) {
@@ -181,6 +178,8 @@ function failure() {
 function init() {
   # Show trajectory for debugging
   show_colored_trajectory(NUMBER_OF_ROBOTS)
+
+  #log("I am robot: ", id)
 
   set_leds(0,255,0)
   init_stigmergies()
