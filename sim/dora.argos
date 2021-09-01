@@ -113,7 +113,7 @@
    <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
-  <visualization>
+  <!-- <visualization>
     <qt-opengl>
       <camera>
         <placements>
@@ -126,6 +126,6 @@
                        quality="100" /> 
       <user_functions label="buzz_qt" show_buzz_editor="false"/>
     </qt-opengl>
-  </visualization>
+  </visualization> -->
 
 </argos-configuration>

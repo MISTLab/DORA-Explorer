@@ -1,17 +1,18 @@
 """
 This program's purpose is simply to run multiple ARGoS experiments in a headless way.
 To do so, it is necessary to comment out the <visualization> section 
-in the experiment file (./dora-mesh.argos).
+in the experiment file (./dora.argos).
 """
 
 
 import subprocess
 
 
-NB_RUNS = 50
+NB_RUNS = 30
+
 
 def main() -> None:
-    command = ["argos3 -c randomwalk.argos"]
+    command = ["argos3 -c dora.argos"]
     for i in range(NB_RUNS):
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         
