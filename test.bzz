@@ -1,0 +1,30 @@
+include "sim/buzz_includes/buzz_utils/current_key.bzz"
+include "sim/buzz_includes/buzz_utils/radiation.bzz"
+include "sim/buzz_includes/buzz_utils/radiation_sensor.bzz"
+include "sim/buzz_includes/buzz_utils/logging.bzz"
+include "sim/buzz_includes/buzz_utils/table.bzz"
+
+# Executed at init time
+function init() {
+  log("I am robot: ", id)
+  sources = { .0 = radiation_source.new(0.0, 0.0, 10.0),
+              .1 = radiation_source.new(2.0, 2.5, 10.0)}
+  sensor = radiation_sensor.new(sources)
+  csv_logger.init()
+}
+
+# Executed every time step
+function step() {
+  radiation_intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
+
+  log("Total intensity: ", radiation_intensity)
+  csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, 0)
+  set_wheels(2.5, 2.5)
+}
+
+function reset() {
+}
+ 
+# Execute at exit
+function destroy() {
+}
