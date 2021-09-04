@@ -1,0 +1,28 @@
+
+function gotoc_buzz(vec){
+    vec_norm = math.vec2.norm(vec)
+    target_x =  vec_norm.x
+    target_y = vec_norm.y
+
+    if (target_y > 0.1 and target_x > 0){
+        set_wheels(0.0, 8.0)
+    }
+
+    else if (target_y < -0.1 and target_x > 0){
+        set_wheels(8.0, 0.0)
+    }
+
+    else if (target_y > 0 and target_x < 0){
+        set_wheels(0.0, 8.0)
+    }
+
+    else if (target_y < 0 and target_x < 0){
+        set_wheels(8.0, 0.0)
+    }
+
+    else {
+        set_wheels(20.0, 20.0)
+    }
+
+
+}
