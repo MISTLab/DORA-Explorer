@@ -10,7 +10,5 @@ function get_current_key(x, y){
 
     key = string.concat(x_string_floor, "_", y_string_floor)
 
-    log(key)
-
     return key
 }
