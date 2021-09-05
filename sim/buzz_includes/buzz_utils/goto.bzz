@@ -1,30 +1,25 @@
-TURN_SPEED = 10.0
-STRAIGHT_SPEED = 10.0
+include "buzz_includes/buzz_utils/vec2.bzz"
+
+
+SPEED = 10.0
 
 function gotoc_buzz(vec){
     vec_norm = math.vec2.norm(vec)
-    target_x =  -vec_norm.x
-    target_y = -vec_norm.y
+    target_x = vec_norm.x
+    target_y = vec_norm.y  
 
-    if (target_y > 0.1 and target_x > 0){
-        set_wheels(0.0, TURN_SPEED)
+    log(target_x, " : ", target_y)
+
+    if (target_x > 0){
+        if (target_y > 0) {
+            set_wheels( (1 - target_y) * SPEED,  SPEED)  # Turn left
+        } else {
+            set_wheels(SPEED, (1 + target_y) * SPEED)  # Turn right
+        }
+    } else if (target_y > 0) {
+        set_wheels(-SPEED, SPEED)  # Turn around left
+    } else {
+        set_wheels(SPEED, -SPEED)  # Turn around right
     }
-
-    else if (target_y < -0.1 and target_x > 0){
-        set_wheels(TURN_SPEED, 0.0)
-    }
-
-    else if (target_y > 0 and target_x < 0){
-        set_wheels(0.0, TURN_SPEED)
-    }
-
-    else if (target_y < 0 and target_x < 0){
-        set_wheels(TURN_SPEED, 0.0)
-    }
-
-    else {
-        set_wheels(STRAIGHT_SPEED, STRAIGHT_SPEED)
-    }
-
 
 }
