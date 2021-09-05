@@ -72,6 +72,8 @@ function init() {
   sources = { .0 = radiation_source.new(0.0, 0.0, 0.1)}
   sensor = radiation_sensor.new(sources)
 
+  csv_logger.init()
+
   # Set first search position
   next_position.x = math.rng.uniform(-1.0,1.0)
   next_position.y = math.rng.uniform(-1.0,1.0)
@@ -86,6 +88,7 @@ function step() {
 
       random_search()
       failed = failure()
+      csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
     }
   }
 
