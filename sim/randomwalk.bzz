@@ -88,8 +88,8 @@ function step() {
 
       random_search()
       failed = failure()
-      csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
     }
+    csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
   }
 
   if (current_step > EXPERIMENT_LENGHT or failed != 0){
