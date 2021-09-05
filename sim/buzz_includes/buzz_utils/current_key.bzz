@@ -1,5 +1,5 @@
 
-include "sim/buzz_includes/buzz_utils/string.bzz"
+include "buzz_includes/buzz_utils/string.bzz"
 
 function get_current_key(x, y){
     x_string = string.tostring(10*x)

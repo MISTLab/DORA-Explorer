@@ -1,6 +1,6 @@
-include "sim/buzz_includes/buzz_utils/string.bzz"
-include "sim/buzz_includes/buzz_utils/table.bzz"
-include "sim/buzz_includes/buzz_utils/current_key.bzz"
+include "buzz_includes/buzz_utils/string.bzz"
+include "buzz_includes/buzz_utils/table.bzz"
+include "buzz_includes/buzz_utils/current_key.bzz"
 
 
 csv_logger = {

@@ -1,5 +1,5 @@
-include "sim/buzz_includes/buzz_utils/radiation.bzz"
-include "sim/buzz_includes/buzz_utils/table.bzz"
+include "buzz_includes/buzz_utils/radiation.bzz"
+include "buzz_includes/buzz_utils/table.bzz"
 
 
 radiation_sensor = {
