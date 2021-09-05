@@ -2,8 +2,8 @@
 include "buzz_includes/buzz_utils/string.bzz"
 
 function get_current_key(x, y){
-    x_string = string.tostring(10*x)
-    y_string = string.tostring(10*y)
+    x_string = string.tostring(5*x)
+    y_string = string.tostring(5*y)
 
     x_string_floor = string.split(x_string, ".")[0]
     y_string_floor = string.split(y_string, ".")[0]
