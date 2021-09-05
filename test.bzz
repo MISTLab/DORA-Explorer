@@ -3,23 +3,80 @@ include "sim/buzz_includes/buzz_utils/radiation.bzz"
 include "sim/buzz_includes/buzz_utils/radiation_sensor.bzz"
 include "sim/buzz_includes/buzz_utils/logging.bzz"
 include "sim/buzz_includes/buzz_utils/table.bzz"
+include "sim/buzz_includes/buzz_utils/vec2.bzz"
+
+EXPERIMENT_LENGHT = 100
+NO_FAIL_DELAY = 10
+
+function failure() {
+  rand = math.rng.uniform(0.2, 1.0)
+  radiation_intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
+  log(radiation_intensity)
+
+  if (current_step > NO_FAIL_DELAY and rand < radiation_intensity) {
+    log("Robot ", id, ": Failure with ", radiation_intensity," > ", rand)
+
+    return 1
+  }
+
+  return 0
+}
+
+
+# Random walk search
+function random_search() { 
+  next_position.x = math.rng.uniform(math.max(next_position.x-0.1, -1.5), math.min(next_position.x+0.1, 1.5))
+  next_position.y = math.rng.uniform(math.max(next_position.y-0.1, -1.5), math.min(next_position.y+0.1, 1.5))
+
+  next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
+
+  scaled_direction = math.vec2.scale(next_position_local, 1)
+  log(scaled_direction)
+  gotoc(scaled_direction.x, scaled_direction.y)
+}
+
 
 # Executed at init time
 function init() {
   log("I am robot: ", id)
-  sources = { .0 = radiation_source.new(0.0, 0.0, 10.0),
-              .1 = radiation_source.new(2.0, 2.5, 10.0)}
+  set_leds(0,255,0)
+
+  failed = 0
+  current_step = 0
+
+  sources = { .0 = radiation_source.new(0.0, 0.0, 0.5)}
+
   sensor = radiation_sensor.new(sources)
   csv_logger.init()
 }
 
 # Executed every time step
 function step() {
-  radiation_intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
 
-  log("Total intensity: ", radiation_intensity)
-  csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, 0)
-  set_wheels(2.5, 2.5)
+  if (current_step == 0) {
+    # Set first search position
+    next_position = {}
+    next_position.x = pose.position.x
+    next_position.y = pose.position.y
+  }
+
+  if (current_step < EXPERIMENT_LENGHT and failed == 0) {
+    failed = failure()
+
+    #set_wheels(2.0,2.0)
+    #random_search()
+    gotoc(2.0, 0.0)
+
+    radiation_intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
+    csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
+  }
+
+  if (current_step == EXPERIMENT_LENGHT or failed != 0){
+    set_wheels(0.0,0.0)
+    log("Experiment terminated")
+  }
+
+  current_step = current_step + 1
 }
 
 function reset() {
