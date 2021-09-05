@@ -1,11 +1,10 @@
 TURN_SPEED = 8.0
 STRAIGHT_SPEED = 10.0
+
 function gotoc_buzz(vec){
     vec_norm = math.vec2.norm(vec)
     target_x =  -vec_norm.x
     target_y = -vec_norm.y
-
-    log(target_x, " : ", target_y)
 
     if (target_y > 0.1 and target_x > 0){
         set_wheels(0.0, TURN_SPEED)
