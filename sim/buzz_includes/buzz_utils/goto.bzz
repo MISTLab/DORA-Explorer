@@ -1,4 +1,4 @@
-TURN_SPEED = 8.0
+TURN_SPEED = 10.0
 STRAIGHT_SPEED = 10.0
 
 function gotoc_buzz(vec){
