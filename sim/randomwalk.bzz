@@ -41,8 +41,8 @@ function update_exploration() {
 
 # Random walk search
 function random_search() { 
-  next_position.x = math.rng.uniform(math.max(next_position.x-SEARCH_SPEED/30, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/30, SEARCH_SPACE.maxx))
-  next_position.y = math.rng.uniform(math.max(next_position.y-SEARCH_SPEED/30, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/30, SEARCH_SPACE.maxy))
+  next_position.x = math.rng.uniform(math.max(next_position.x-SEARCH_SPEED/100, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/100, SEARCH_SPACE.maxx))
+  next_position.y = math.rng.uniform(math.max(next_position.y-SEARCH_SPEED/100, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/100, SEARCH_SPACE.maxy))
 
   next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
 
@@ -69,7 +69,7 @@ function init() {
   failed = 0
   math.rng.setseed(id)
 
-  sources = { .0 = radiation_source.new(0.0, 0.0, 0.5)}
+  sources = { .0 = radiation_source.new(0.0, 0.0, 0.1)}
   sensor = radiation_sensor.new(sources)
 
   # Set first search position
@@ -80,7 +80,7 @@ function init() {
 # Executed every time step
 function step() {
   if (current_step < EXPERIMENT_LENGHT) {
-    if (failed == 0) {
+    if (current_step % NEW_POSE_DELAY and failed == 0) {
       update_exploration()
       update_risk()
 
