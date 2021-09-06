@@ -5,7 +5,8 @@ include "buzz_includes/buzz_utils/current_key.bzz"
 
 csv_logger = {
     .init = function() {
-        result_file = io.fopen("results.csv", "w")
+        file_name = string.concat("results_", string.tostring(id), ".csv")
+        result_file = io.fopen(file_name, "w")
         io.fwrite(result_file, "x_key,y_key,radiation,weight,step,id")
         io.fclose(result_file)
     },
