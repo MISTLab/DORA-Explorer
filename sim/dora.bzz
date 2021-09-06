@@ -12,7 +12,8 @@ include "buzz_includes/buzz_utils/logging.bzz"
 
 
 EXPLORATION_GAIN = 1.0
-RISK_GAIN = 0
+RISK_GAIN = 1.0
+RISK_THRESHOLD = 0.15
 NO_FAIL_DELAY = 20
 
 var stigmergy_risk
@@ -42,7 +43,6 @@ function init_stigmergies() {
 function update_risk() {
   new_value = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y) + math.rng.gaussian(0,0.1)
   current_key = get_current_key(pose.position.x, pose.position.y)
-  # log("Radiation: ", new_value, ", key: ", current_key, "count: ", stigmergy_risk.size())
   if (stigmergy_risk.get(current_key) != nil){
     new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
   }
@@ -63,10 +63,10 @@ function exploration_gradient(adjacent_key, i, j) {
     if (exploration_adjacent!= nil) {
       return current_step - exploration_adjacent
     } else {
-        return current_step
+      return current_step
     }
   } else {
-      return 0.0
+    return 0.0
   }
 }
 
@@ -114,7 +114,6 @@ function gradient(gradient_function){
     while (j <= 1){
       if (not(i == 0 and j == 0)){
         gradient_intensity = gradient_function(get_adjacent_key(i, j),i,j)
-        # log("Gradient with neighbor at ", i, ":", j, " is : ", gradient_intensity)
         adjacent_gradient = math.vec2.scale(math.vec2.norm(math.vec2.new(i, j)), gradient_intensity)
         gradient_vec = math.vec2.add(gradient_vec, adjacent_gradient)
       }
@@ -132,30 +131,24 @@ function gradient(gradient_function){
 }
 
 function move() {
-  log("Exploration")
-  exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_GAIN)
-  risk = math.vec2.scale(gradient(risk_gradient), RISK_GAIN)
-
-  if (close_to_obstacle()){
+  if (not close_to_obstacle()) {
     obstacle_avoidance = avoid_obstacle()
+  } else if (radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y) > RISK_THRESHOLD) {
+    risk = math.vec2.scale(gradient(risk_gradient), RISK_GAIN)
+    gotoc_buzz(to_local_coordinates(risk, pose.orientation.yaw))
+    log("Radiation")
   } else {
-      obstacle_avoidance = math.vec2.new(0.0,0.0)
+    exploration = math.vec2.scale(gradient(exploration_gradient), EXPLORATION_GAIN)
+    gotoc_buzz(to_local_coordinates(exploration, pose.orientation.yaw))
+    log("Exploration")
   }
-
-  risk_direction_local = to_local_coordinates(risk, pose.orientation.yaw)
-  exploration_direction_local = to_local_coordinates(exploration, pose.orientation.yaw)
-
-  norm_direction = math.vec2.add(exploration_direction_local, risk_direction_local)
-  norm_direction_avoidance = math.vec2.add(norm_direction, math.vec2.new(0.0, 0.0))
-  table.print(norm_direction_avoidance)
-
-  gotoc_buzz(norm_direction_avoidance)
 }
 
 function to_local_coordinates(vector, yaw) {
   if (vector.x != 0.0 or vector.y != 0.0){
     return math.vec2.rotate(vector, -yaw)
   } else {
+    log("Gradient is too small. Going forward.")
     return math.vec2.new(1.0, 0.0)
   }
 }
@@ -178,7 +171,7 @@ function init() {
   failed = 0
   math.rng.setseed(id)
 
-  sources = { .0 = radiation_source.new(0.0, 0.0, 0.5)}
+  sources = { .0 = radiation_source.new(0.8, -0.8, 0.5)}
   sensor = radiation_sensor.new(sources)
 
   csv_logger.init()
@@ -188,15 +181,13 @@ function init() {
 function step() {
   if (current_step < EXPERIMENT_LENGHT) {
     if (failed == 0) {
-      # stigmergy_exploration.foreach(function(k, v, rid) { log(k, ":", v) })
-      log("-----------------------------------------------------------")
       update_exploration()
       update_risk()
       move()
       update_previous_sensor_readings()
       failed = failure()
     }
-    csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
+    csv_logger.log_data(pose.position.x, pose.position.y, radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y), current_step)
   }
 
   if (current_step > EXPERIMENT_LENGHT or failed != 0){
