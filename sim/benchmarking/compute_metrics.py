@@ -29,7 +29,7 @@ def parse_results() -> None:
                     nb_active_robots[folder_id, run, step] += 1
 
                 nb_explored_cells[folder_id, run, step:MAX_NB_STEPS] = nb_explored_cells[folder_id, run, step]
-                nb_active_robots[folder_id, run, step:MAX_NB_STEPS] = nb_active_robots[folder_id, run, step]
+                nb_active_robots[folder_id, run, step:MAX_NB_STEPS] = 0
 
     return nb_explored_cells, nb_active_robots
 

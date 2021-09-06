@@ -31,7 +31,7 @@ def store_stepwise_results(file_reader, stepwise_results: dict) -> None:
 
 
 def main():
-    for folder in [FOLDER_RESULTS_FRONTIER, FOLDER_RESULTS_RANDOM]:
+    for folder in [FOLDER_RESULTS_FRONTIER, FOLDER_RESULTS_RANDOM, FOLDER_RESULTS_DORA]:
         for experiment in range(NB_RUNS):
             stepwise_results = aggregate_results(folder, experiment)
 
