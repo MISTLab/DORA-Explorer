@@ -1,0 +1,30 @@
+
+include "buzz_includes/buzz_utils/table.bzz"
+include "buzz_includes/buzz_utils/vec2.bzz"
+include "buzz_includes/buzz_utils/goto.bzz"
+
+# Executed at init time
+function init() {
+  log("I am robot: ", id)
+  #set_leds(0,255,0)
+  target = math.vec2.new(1.0, 1.0)
+}
+
+# Executed every time step
+function step() {
+  #increment = math.vec2.new(0.1, 0.0)
+  #target = math.vec2.add(target, increment)
+  #log(pose.position.x, " : ", pose.position.y)
+  #log(pose.orientation.yaw * (180/3.14))
+  target_local = math.vec2.rotate(math.vec2.sub(target, pose.position), -pose.orientation.yaw)
+
+  gotoc_buzz(target_local)
+  log(pose.position.x)
+}
+
+function reset() {
+}
+ 
+# Execute at exit
+function destroy() {
+}

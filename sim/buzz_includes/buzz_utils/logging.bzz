@@ -1,0 +1,22 @@
+include "buzz_includes/buzz_utils/string.bzz"
+include "buzz_includes/buzz_utils/table.bzz"
+include "buzz_includes/buzz_utils/current_key.bzz"
+
+
+csv_logger = {
+    .init = function() {
+        file_name = string.concat("results_", string.tostring(id), ".csv")
+        result_file = io.fopen(file_name, "w")
+        io.fwrite(result_file, "x_key,y_key,radiation,weight,step,id")
+        io.fclose(result_file)
+    },
+
+    .log_data = function(x, y, radiation, step) {
+        x_key = string.split(get_current_key(x, y), "_")[0]
+        y_key = string.split(get_current_key(x, y), "_")[1]
+
+        result_file = io.fopen("results.csv", "a")
+        io.fwrite(result_file, x_key, ",", y_key, ",", radiation, ",", 1, ",", step, ",", id)
+        io.fclose(result_file)
+    }
+}

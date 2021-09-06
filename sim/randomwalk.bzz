@@ -2,22 +2,17 @@ include "buzz_includes/buzz_utils/vec2.bzz"
 include "buzz_includes/buzz_utils/string.bzz"
 include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
-include "buzz_includes/debug.bzz"
+include "buzz_includes/buzz_utils/goto.bzz"
+include "buzz_includes/buzz_utils/current_key.bzz"
+include "buzz_includes/buzz_utils/radiation.bzz"
+include "buzz_includes/buzz_utils/radiation_sensor.bzz"
+include "buzz_includes/buzz_utils/logging.bzz"
+
 
 var stigmergy_risk
 var stigmergy_exploration
 NO_FAIL_DELAY = 20
 
-function log_metrics(){
-  if (debug.msgqueue != nil and failed != 1) {
-    log_datasize(debug.msgqueue.total, current_step)
-  }
-  if (id == 0) {
-    stigmergy_risk.foreach(function(key, data, robot){
-      log_datum(key, data, current_step)
-    })
-  }
-}
 
 function init_stigmergies() {
   stigmergy_risk = stigmergy.create(1)
@@ -32,8 +27,8 @@ function init_stigmergies() {
 }
 
 function update_risk() {
-  new_value = get_radiation_intensity() + math.rng.gaussian(0,0.1)
-  current_key = get_current_key()
+  new_value = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y) + math.rng.gaussian(0,0.1)
+  current_key = get_current_key(pose.position.x, pose.position.y)
   if (stigmergy_risk.get(current_key) != nil){
     new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
   }
@@ -41,25 +36,24 @@ function update_risk() {
 }
 
 function update_exploration() {
-  stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
+  stigmergy_exploration.put(get_current_key(pose.position.x, pose.position.y), current_step)  # Put timestamp in exploration map
 }
 
 # Random walk search
-function random_search()
-{ 
-  next_position.x = uniform(math.max(next_position.x-SEARCH_SPEED/100, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/100, SEARCH_SPACE.maxx))
-  next_position.y = uniform(math.max(next_position.y-SEARCH_SPEED/100, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/100, SEARCH_SPACE.maxy))
+function random_search() { 
+  next_position.x = math.rng.uniform(math.max(next_position.x-SEARCH_SPEED/50, SEARCH_SPACE_RAND.minx), math.min(next_position.x+SEARCH_SPEED/50, SEARCH_SPACE_RAND.maxx))
+  next_position.y = math.rng.uniform(math.max(next_position.y-SEARCH_SPEED/50, SEARCH_SPACE_RAND.miny), math.min(next_position.y+SEARCH_SPEED/50, SEARCH_SPACE_RAND.maxy))
 
   next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
 
   scaled_direction = math.vec2.scale(next_position_local, SEARCH_SPEED)
 
-  gotoc(scaled_direction.x, scaled_direction.y)
+  gotoc_buzz(math.vec2.new(scaled_direction.x, scaled_direction.y))
 }
 
 function failure() {
   rand = math.rng.uniform(0.2, 1.0)
-  intensity = get_radiation_intensity()
+  intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
 
   if (current_step > NO_FAIL_DELAY and rand < intensity) {
     log("Robot ", id, ": Failure with ", intensity," > ", rand)   
@@ -70,18 +64,19 @@ function failure() {
 
 # Executed at init time
 function init() {
-  # Show trajectory for debugging
-  show_colored_trajectory(NUMBER_OF_ROBOTS)
 
-  # Set first search position
-  next_position.x = pose.position.x
-  next_position.y = pose.position.y 
-
-
-  set_leds(0,255,0)
   init_stigmergies()
   failed = 0
   math.rng.setseed(id)
+
+  sources = { .0 = radiation_source.new(0.0, 0.0, 0.1)}
+  sensor = radiation_sensor.new(sources)
+
+  csv_logger.init()
+
+  # Set first search position
+  next_position.x = math.rng.uniform(-1.0,1.0)
+  next_position.y = math.rng.uniform(-1.0,1.0)
 }
 
 # Executed every time step
@@ -94,12 +89,12 @@ function step() {
       random_search()
       failed = failure()
     }
-    log_metrics()
+    csv_logger.log_data(pose.position.x, pose.position.y, radiation_intensity, current_step)
   }
 
   if (current_step > EXPERIMENT_LENGHT or failed != 0){
     set_wheels(0.0,0.0)
-    set_leds(255,0,0)
+    log("Experiment terminated")
   }
 
   current_step = current_step + 1

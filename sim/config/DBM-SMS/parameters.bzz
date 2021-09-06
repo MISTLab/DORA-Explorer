@@ -1,5 +1,6 @@
 # Search space parameters
-SEARCH_SPACE = { .minx = -8.0, .miny = -8.0, .maxx = 8.0, .maxy = 8.0}
+SEARCH_SPACE_DORA = { .minx = -5.0, .miny = -5.0, .maxx = 5.0, .maxy = 5.0}
+SEARCH_SPACE_RAND = { .minx = -1.0, .miny = -1.0, .maxx = 1.0, .maxy = 1.0}
 
 # Searching drones parameters
 NUMBER_OF_ROBOTS = 15
@@ -12,5 +13,5 @@ TARGET_SPEED_MAX = 20.0
 TARGET_SPEED_STDEV = 0.5
 
 # Experiment parameters
-EXPERIMENT_LENGHT = 300
+EXPERIMENT_LENGHT = 800
 
