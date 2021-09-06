@@ -41,8 +41,8 @@ function update_exploration() {
 
 # Random walk search
 function random_search() { 
-  next_position.x = math.rng.uniform(math.max(next_position.x-SEARCH_SPEED/100, SEARCH_SPACE.minx), math.min(next_position.x+SEARCH_SPEED/100, SEARCH_SPACE.maxx))
-  next_position.y = math.rng.uniform(math.max(next_position.y-SEARCH_SPEED/100, SEARCH_SPACE.miny), math.min(next_position.y+SEARCH_SPEED/100, SEARCH_SPACE.maxy))
+  next_position.x = math.rng.uniform(math.max(next_position.x-SEARCH_SPEED/50, SEARCH_SPACE_RAND.minx), math.min(next_position.x+SEARCH_SPEED/50, SEARCH_SPACE_RAND.maxx))
+  next_position.y = math.rng.uniform(math.max(next_position.y-SEARCH_SPEED/50, SEARCH_SPACE_RAND.miny), math.min(next_position.y+SEARCH_SPEED/50, SEARCH_SPACE_RAND.maxy))
 
   next_position_local = math.vec2.rotate(math.vec2.sub(next_position, pose.position), -pose.orientation.yaw)
 
