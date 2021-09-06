@@ -3,23 +3,18 @@ include "buzz_includes/buzz_utils/string.bzz"
 include "config/DBM-SMS/parameters.bzz"
 include "buzz_includes/DBM-SMS/global_variables.bzz"
 include "buzz_includes/debug.bzz"
+include "buzz_includes/buzz_utils/goto.bzz"
+include "buzz_includes/buzz_utils/current_key.bzz"
+include "buzz_includes/buzz_utils/radiation.bzz"
+include "buzz_includes/buzz_utils/radiation_sensor.bzz"
+include "buzz_includes/buzz_utils/logging.bzz"
 
 EDGE_BUFFER = 0.0
 var stigmergy_risk
 var stigmergy_exploration
 NO_FAIL_DELAY = 20
-MAX_SCAN_DISTANCE = math.max(SEARCH_SPACE.maxx - SEARCH_SPACE.minx, SEARCH_SPACE.maxy - SEARCH_SPACE.miny)
+MAX_SCAN_DISTANCE = math.max(SEARCH_SPACE_DORA.maxx - SEARCH_SPACE_DORA.minx, SEARCH_SPACE_DORA.maxy - SEARCH_SPACE_DORA.miny)
 
-function log_metrics(){
-  if (debug.msgqueue != nil and failed != 1) {
-    log_datasize(debug.msgqueue.total, current_step)
-  }
-  if (id == 0) {
-    stigmergy_risk.foreach(function(key, data, robot){
-      log_datum(key, data, current_step)
-    })
-  }
-}
 
 function init_stigmergies() {
   stigmergy_risk = stigmergy.create(1)
@@ -34,8 +29,8 @@ function init_stigmergies() {
 }
 
 function update_risk() {
-  new_value = get_radiation_intensity() + math.rng.gaussian(0,0.1)
-  current_key = get_current_key()
+  new_value = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y) + math.rng.gaussian(0,0.1)
+  current_key = get_current_key(pose.position.x, pose.position.y)
   if (stigmergy_risk.get(current_key) != nil){
     new_value = 0.5 * new_value + 0.5 * stigmergy_risk.get(current_key)
   }
@@ -43,13 +38,13 @@ function update_risk() {
 }
 
 function update_exploration() {
-  stigmergy_exploration.put(get_current_key(), current_step)  # Put timestamp in exploration map
+  stigmergy_exploration.put(get_current_key(pose.position.x, pose.position.y), current_step)  # Put timestamp in exploration map
 }
 
 
 function failure() {
   rand = math.rng.uniform(0.2, 1.0)
-  intensity = get_radiation_intensity()
+  intensity = radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y)
 
   if (current_step > NO_FAIL_DELAY and rand < intensity) {
     log("Robot ", id, ": Failure with ", intensity," > ", rand)   
@@ -63,7 +58,7 @@ function get_key(position) {
 }
 
 function get_adjacent_position(i, j) {
-  split_key = string.split(get_current_key(), "_")
+  split_key = string.split(get_current_key(pose.position.x, pose.position.y), "_")
   x = string.toint(split_key[0]) + i
   y = string.toint(split_key[1]) + j
 
@@ -81,10 +76,7 @@ function safe_normalize(vector) {
 }
 
 function position_in_bounds(position){
-  return position.x <= SEARCH_SPACE.maxx - EDGE_BUFFER and
-         position.x >= SEARCH_SPACE.minx + EDGE_BUFFER and 
-         position.y <= SEARCH_SPACE.maxy - EDGE_BUFFER and
-         position.y >= SEARCH_SPACE.miny + EDGE_BUFFER
+  return position.x <= SEARCH_SPACE_DORA.maxx - EDGE_BUFFER and position.x >= SEARCH_SPACE_DORA.minx + EDGE_BUFFER and  position.y <= SEARCH_SPACE_DORA.maxy - EDGE_BUFFER and position.y >= SEARCH_SPACE_DORA.miny + EDGE_BUFFER
 }
 
 function explored_cell(key){
@@ -135,41 +127,40 @@ function move() {
 
   if (frontier_direction != nil) {
     frontier_direction_local = math.vec2.rotate(frontier_direction, -pose.orientation.yaw)
-    scaled_direction = math.vec2.scale(frontier_direction_local, SEARCH_SPEED)
-
-    gotoc(scaled_direction.x, scaled_direction.y)
-
-
+    gotoc_buzz(frontier_direction_local)
   }
 }
 
 # Executed at init time
 function init() {
-  # Show trajectory for debugging
-  show_colored_trajectory(NUMBER_OF_ROBOTS)
+  log("I am robot: ", id)
 
-  set_leds(0,255,0)
   init_stigmergies()
   failed = 0
   math.rng.setseed(id)
+
+  sources = { .0 = radiation_source.new(0.8, -0.8, 0.5)}
+  sensor = radiation_sensor.new(sources)
+
+  csv_logger.init()
 
 }
 
 # Executed every time step
 function step() {
   if (current_step < EXPERIMENT_LENGHT) {
-    if (current_step % NEW_POSE_DELAY and failed == 0) {
+    if (failed == 0) {
       update_exploration()
       update_risk()
       move()
       failed = failure()
     }
-    log_metrics()
+    csv_logger.log_data(pose.position.x, pose.position.y, radiation_sensor.get_total_perceived_radiation(sensor, pose.position.x, pose.position.y), current_step)
   }
 
   if (current_step > EXPERIMENT_LENGHT or failed != 0){
     set_wheels(0.0,0.0)
-    set_leds(255,0,0)
+    log("Experiment terminated")
   }
 
   current_step = current_step + 1
