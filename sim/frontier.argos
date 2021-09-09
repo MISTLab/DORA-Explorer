@@ -49,17 +49,17 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="16, 16, 2" center="0,0,1">
+  <arena size="20, 20, 2" center="0,0,1">
 
     <!-- * Exterior walls of the environment * -->
-    <box id="wall_north" size="16,0.1,0.5" movable="false">
-      <body position="0,8,0" orientation="0,0,0" />
+    <box id="wall_north" size="20,0.1,0.5" movable="false">
+      <body position="0,10,0" orientation="0,0,0" />
     </box>
-    <box id="wall_south" size="16,0.1,0.5" movable="false">
-      <body position="0,-8,0" orientation="0,0,0" />
+    <box id="wall_south" size="20,0.1,0.5" movable="false">
+      <body position="0,-10,0" orientation="0,0,0" />
     </box>
-    <box id="wall_east" size="0.1,16,0.5" movable="false">
-      <body position="8,0,0" orientation="0,0,0" />
+    <box id="wall_east" size="0.1,20,0.5" movable="false">
+      <body position="10,0,0" orientation="0,0,0" />
     </box>
     <box id="wall_west" size="0.1,16,0.5" movable="false">
       <body position="-8,0,0" orientation="0,0,0" />
@@ -75,7 +75,7 @@
 
     <!-- * Random obstacles in the environment * -->
     <distribute>
-      <position method="uniform" min="-8,-8,0" max="8,8,0" />
+      <position method="uniform" min="-10,-10,0" max="10,10,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="5" max_trials="100">
         <box id="b" size="0.8,0.8.0,0.8" movable="false" />
@@ -84,7 +84,7 @@
 
     <!-- * Initial drones positions * -->
     <distribute>
-      <position method="uniform" min="-5,-5,0" max="5,5,0" />
+      <position method="uniform" min="-9,-9,0" max="9,9,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="10" max_trials="100">
         <kheperaiv id="sp" rab_range="1000000" rab_data_size="100000">
