@@ -1,4 +1,6 @@
 import csv
+from typing import Tuple
+from matplotlib.figure import Figure
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -11,7 +13,7 @@ MAX_NB_STEPS = 200
 NB_RUNS = 5
 
 
-def parse_results() -> None:
+def parse_results() -> Tuple:
     nb_explored_cells = np.zeros((len(folders), NB_RUNS, MAX_NB_STEPS))
     nb_active_robots = np.zeros((len(folders), NB_RUNS, MAX_NB_STEPS))
 
@@ -33,28 +35,29 @@ def parse_results() -> None:
 
     return nb_explored_cells, nb_active_robots
 
-def plot_single_metric(metric_data: np.ndarray, dependant_variable: str, file_name: str) -> None:
-    x_axis = np.arange(MAX_NB_STEPS)
+def plot_single_metric(metric_data: np.ndarray, dependant_variable: str, file_name: str, metric: str) -> None:
+    x_axis = np.arange(MAX_NB_STEPS - 1)
     colors = ["lightcoral","orchid", "cornflowerblue"]
 
-    fig = plt.figure()
+    fig: Figure = plt.figure()
     ax = fig.gca()
 
     for f in range(len(folders)):
-        std = np.array([0.5 * np.nanstd(metric_data[f, :, i]) for i in range(MAX_NB_STEPS)])
-        mean = metric_data[f, :, :].mean(0)
+        std = np.array([0.5 * np.nanstd(metric_data[f, :, i]) for i in range(MAX_NB_STEPS - 1)])
+        mean = metric_data[f, :, :-1].mean(0)
         ax.scatter(x_axis, mean, c=colors[f])
         ax.fill_between(x_axis, mean-std, mean+std, alpha=0.25, color=colors[f], label='_nolegend_')
     
+    ax.set_title(f"{metric} Performance, N=5 Physical Robots")
     ax.set_xlabel("Step")
     ax.set_ylabel(dependant_variable)
     ax.legend(['Random Walk', 'Frontier', 'DORA'])
-    plt.savefig(figures_folder + file_name)
+    plt.savefig(figures_folder + file_name, transparent=True)
 
 
 def plot_metrics(nb_explored_cells: np.ndarray, nb_active_robots: np.ndarray) -> None:       
-    plot_single_metric(nb_explored_cells, "Number of cells explored", "explored.png")
-    plot_single_metric(nb_active_robots, "Number of active robots", "activerobots.png")
+    plot_single_metric(nb_explored_cells, "Number of cells explored", "explored_physical.png", "Exploration")
+    plot_single_metric(nb_active_robots, "Number of active robots", "activerobots_physical.png", "Survival")
 
 
 def main() -> None:
